@@ -83,7 +83,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     and the total number of issuers is less than the issuer cap*/
     function authorizeIssuer(address newIssuer) public {
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
-        require(totalIssuers<maxIssuers, "Maximum number of Issuers reached");
+        require(totalIssuers < maxIssuers, "Maximum number of Issuers reached");
         totalIssuers++;
         issuers.push(newIssuer);
         isIssuer[newIssuer] = 1;
@@ -97,7 +97,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         require (block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
         delete isIssuer[existingIssuer];
         totalIssuers--;
-        updateIssuers(issuerData[existingIssuer].index);
+        removeIssuerFromArray(existingIssuer);
         delete issuerData[existingIssuer];
     }
 
@@ -109,7 +109,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
                 address expired = issuers[idx];
                 delete isIssuer[expired];
                 totalIssuers--;
-                updateIssuers(idx);
+                removeIssuerFromArray(expired);
                 delete issuerData[expired];
             }
         }
@@ -202,16 +202,16 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         return issuers;
     }
 
-    /*Removes addresses from the the issuers array and updates the array by shifting the entries down 
-    to fill the empty index location.*/
-    function updateIssuers(uint _index) internal {
-        require(_index < issuers.length, "Index out of bound");
+    function removeIssuerFromArray(address issuer) internal {
+        uint idx = issuerData[issuer].index;       // Get the index of the issuer to remove
+        uint lastIdx = issuers.length - 1;          // Index of the last element in the array
 
-        for (uint i = _index; i < issuers.length - 1; i++) {
-            issuers[i] = issuers[i + 1];
-            issuerData[issuers[i]].index = i;
+        if (idx != lastIdx) {                       // If it's not already the last element
+            address lastIssuer = issuers[lastIdx];  // Get the last issuer
+            issuers[idx] = lastIssuer;              // Move the last issuer into the removed issuer's slot
+            issuerData[lastIssuer].index = idx;     // Update the moved issuer's stored index
         }
-        issuers.pop();
+        issuers.pop();                              // Remove the last element (which is now duplicate)
     }
 
     //The following functions are overrides required by Solidity.
