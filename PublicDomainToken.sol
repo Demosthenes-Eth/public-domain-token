@@ -147,6 +147,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
 
     //Added logic to update burn data for issuer
     function burnFrom(address account, uint256 amount) public override onlyIssuer {
+        _spendAllowance(account, msg.sender, amount);
         _burn(account, amount);
         issuerData[msg.sender].totalBurned += amount;
         issuerData[msg.sender].burnCount++;
