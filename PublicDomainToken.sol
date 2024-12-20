@@ -161,9 +161,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         uint256 burnCount = issuerData[_issuerAddress].burnCount;
         uint256 totalBurned = issuerData[_issuerAddress].totalBurned;
         //Average tokens minted for each time address has called the mint function
-        uint256 avgMint = totalMinted / mintCount;
+        uint256 avgMint = (mintCount == 0) ? 0 : totalMinted / mintCount;
         //Average tokens burned for each time address has called the burn function
-        uint256 avgBurn = totalBurned / burnCount;
+        uint256 avgBurn = (burnCount == 0) ? 0 : totalBurned / burnCount;
         uint256 currentSupply = totalSupply();
         uint256 avgPercentMint = (avgMint/currentSupply) * 100;
         uint256 mintAdjustedBase = baseMintFactor - avgPercentMint;
