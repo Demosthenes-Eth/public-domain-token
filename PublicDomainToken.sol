@@ -118,27 +118,14 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     function mint(address to, uint256 amount) public onlyIssuer {
         uint256 mintFactor = calculateMintFactor(msg.sender);
         uint256 currentSupply = totalSupply();
-        if(currentSupply < minSupply){
-            /*If the current supply is less than the minimum supply, mint the difference to raise
-            the total supply back to the minimum*/
-            uint256 supplyDiff = minSupply - currentSupply;
-            _mint(to,supplyDiff);
-            issuerData[msg.sender].totalMinted += supplyDiff;
-            issuerData[msg.sender].mintCount++;
-        } else if (amount * 100 <= currentSupply * mintFactor){
-            /*If the amount of tokens requested equals a percentage of the current supply that is 
-            equal to or less than the issuer's current mint factor*/
-            _mint(to, amount);
-            issuerData[msg.sender].totalMinted += amount;
-            issuerData[msg.sender].mintCount++;
-        } else {
-            /*Adjusts the minting amount to a percentage of the current supply as determined 
-            by the baseMintFactor*/
-            uint256 adjustedAmount = (amount * 100) / baseMintFactor;
-            _mint(to, adjustedAmount);
-            issuerData[msg.sender].totalMinted += adjustedAmount;
-            issuerData[msg.sender].mintCount++;
-        }
+        //Require that minters keep the total supply above the minimum supply floor
+        require(amount + currentSupply >= minSupply, "Minted amount would be less than minimum supply floor");
+        //Amount of tokens minted can't exceed the allowable number of tokens that can be minted 
+        //based on the minter's mint factor
+        require(amount * 100 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
+        _mint(to,amount);
+        issuerData[msg.sender].totalMinted += amount;
+        issuerData[msg.sender].mintCount++;
     }
 
     //Added logic to update burn data for issuer
