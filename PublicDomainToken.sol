@@ -122,7 +122,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
             _mint(to,supplyDiff);
             issuerData[msg.sender].totalMinted += supplyDiff;
             issuerData[msg.sender].mintCount++;
-        } else if ((amount/currentSupply) <= mintFactor){
+        } else if (amount * 100 <= currentSupply * mintFactor){
             /*If the amount of tokens requested equals a percentage of the current supply that is 
             equal to or less than the issuer's current mint factor*/
             _mint(to, amount);
@@ -131,7 +131,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         } else {
             /*Adjusts the minting amount to a percentage of the current supply as determined 
             by the baseMintFactor*/
-            uint256 adjustedAmount = (amount * 100)/baseMintFactor;
+            uint256 adjustedAmount = (amount * 100) / baseMintFactor;
             _mint(to, adjustedAmount);
             issuerData[msg.sender].totalMinted += adjustedAmount;
             issuerData[msg.sender].mintCount++;
@@ -165,7 +165,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         //Average tokens burned for each time address has called the burn function
         uint256 avgBurn = (burnCount == 0) ? 0 : totalBurned / burnCount;
         uint256 currentSupply = totalSupply();
-        uint256 avgPercentMint = (avgMint/currentSupply) * 100;
+        uint256 avgPercentMint = (avgMint * 100) / currentSupply;
         uint256 mintAdjustedBase = baseMintFactor - avgPercentMint;
         uint256 burnOffset;
 
