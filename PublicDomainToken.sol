@@ -137,8 +137,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         issuerData[msg.sender].burnCount++;
     }
 
-    /*Helper function to determine max amount of tokens that can be issued in the transaction
-    based on a number of factors*/
+    //Determines max amount of tokens that can be issued in the transaction
+    //as a percentage of the current supply
 
     function calculateMintFactor(address _issuerAddress) view internal returns (uint256){
         uint256 totalMinted = issuerData[_issuerAddress].totalMinted;
@@ -158,12 +158,13 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         if (totalMinted <= totalBurned){
             burnOffset+=1;
             }
-        /*If the average number of tokens burned per burn is higher than the average number
-        of tokens minted per mint*/
+        //If the average number of tokens burned per burn is higher than the
+        //average number of tokens minted per mint
         if (avgMint <= avgBurn){
             burnOffset+=1;
         }
-        //If the average number of tokens minted per mint is less than 2% of the current supply
+        //If the average number of tokens minted per mint 
+        //is less than 2% of the current supply
         if (avgPercentMint <= 2){
             burnOffset+=1;
         }
@@ -177,8 +178,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         }
     }
 
-    /*Returns the entire array of issuers so users can easily see which addresses are currently 
-    authorized issuers at any time.*/
+    //Returns the entire array of issuers so users can easily see 
+    //which addresses are currently authorized issuers at any time.
     function getIssuers() public view returns (address[] memory){
         return issuers;
     }
