@@ -103,11 +103,14 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
 
     //Loops through issuers array and deauthorizes any addresses whose expiration has passed
     function deauthorizeAllExpiredIssuers() public {
-        for (uint i = 0; i < issuers.length - 1; i++) {
-            if(block.number >= issuerData[issuers[i]].expirationBlock) {
-                delete isIssuer[issuers[i]];
+        for (uint i = issuers.length; i > 0; i--) {
+            uint idx = i - 1;
+            if (block.number >= issuerData[issuers[idx]].expirationBlock) {
+                address expired = issuers[idx];
+                delete isIssuer[expired];
                 totalIssuers--;
-                updateIssuers(i);
+                updateIssuers(idx);
+                delete issuerData[expired];
             }
         }
     }
