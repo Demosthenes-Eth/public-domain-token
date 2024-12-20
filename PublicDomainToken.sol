@@ -1,12 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-/*Trying to determine if there's a bug that needs to be fixed where deauthorizing 
-an issuer address and updating the issuers array would cause duplicate issuers in 
-the array with index of 0 since deleting the issuerData struct just resets
-all of the variables to the default value which is 0.
-*/
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -190,15 +184,15 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     }
 
     function removeIssuerFromArray(address issuer) internal {
-        uint idx = issuerData[issuer].index;       // Get the index of the issuer to remove
-        uint lastIdx = issuers.length - 1;          // Index of the last element in the array
+        uint idx = issuerData[issuer].index;
+        uint lastIdx = issuers.length - 1;
 
-        if (idx != lastIdx) {                       // If it's not already the last element
-            address lastIssuer = issuers[lastIdx];  // Get the last issuer
-            issuers[idx] = lastIssuer;              // Move the last issuer into the removed issuer's slot
-            issuerData[lastIssuer].index = idx;     // Update the moved issuer's stored index
+        if (idx != lastIdx) {                       
+            address lastIssuer = issuers[lastIdx];  
+            issuers[idx] = lastIssuer;              
+            issuerData[lastIssuer].index = idx;     
         }
-        issuers.pop();                              // Remove the last element (which is now duplicate)
+        issuers.pop();                              
     }
 
     //The following functions are overrides required by Solidity.
