@@ -131,6 +131,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     }
 
     function mint(address to, uint256 userRequestedAmount) public onlyIssuer {
+        require(to != address(0), "ERC20: mint to the zero address");
+        require(userRequestedAmount > 0, "Minted amount must be greater than 0");
         uint256 mintFactor = calculateMintFactor(msg.sender);
         uint256 currentSupply = totalSupply();
 
@@ -192,7 +194,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         uint256 scaledAvgPercentMint = (scaledAvgMint * 100) / (scalingFactor * currentSupply);
         
         uint256 mintAdjustedBase;
-        
+
         //Clip to 0 if scaled avg percent mint is greater than base mint factor
         if (scaledAvgPercentMint >= baseMintFactor) {
             mintAdjustedBase = 0;
