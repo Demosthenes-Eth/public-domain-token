@@ -185,6 +185,10 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         }
     }
 
+    function getIssuerMintFactor(address _issuerAddress) public view returns (uint256){
+        return calculateMintFactor(_issuerAddress);
+    }
+
     //Returns the entire array of issuers so users can easily see 
     //which addresses are currently authorized issuers at any time.
     function getIssuers() public view returns (address[] memory){
