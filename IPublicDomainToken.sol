@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IPublicDomainToken {
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+interface IPublicDomainToken is IERC20{
 
     event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
     event IssuerDeauthorized(address indexed issuer, address indexed deauthorizer);
