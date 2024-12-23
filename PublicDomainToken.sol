@@ -178,6 +178,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         //Average tokens burned for each time address has called the burn function
         uint256 avgBurn = (burnCount == 0) ? 0 : totalBurned / burnCount;
         uint256 currentSupply = totalSupply();
+        if(currentSupply == 0){
+            return baseMintFactor;
+        }
         uint256 avgPercentMint = (avgMint * 100) / currentSupply;
         uint256 mintAdjustedBase = baseMintFactor - avgPercentMint;
         uint256 burnOffset;
