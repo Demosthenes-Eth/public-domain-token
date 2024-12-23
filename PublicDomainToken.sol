@@ -48,6 +48,19 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     //Maps addresses to the Issuer struct which stores their issuer data.
     mapping (address => Issuer) public issuerData;
 
+    event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
+    event IssuerDeauthorized(address indexed issuer, address indexed deauthorizer);
+    event IssuerActivity(
+        address indexed issuer,
+        uint256 minted,
+        uint256 burned,
+        uint256 totalMintedSoFar,
+        uint256 totalBurnedSoFar
+    );
+    event IssuerIntervalUpdated(uint256 oldInterval, uint256 newInterval);
+    event BaseMintFactorUpdated(uint256 oldMintFactor, uint256 newMintFactor);
+    event MinSupplyUpdated(uint256 oldMinSupply, uint256 newMinSupply);
+
     //Checks if the address of the function caller is currently a non-expired, authorized issuer.
     modifier onlyIssuer (){
         require(isIssuer[msg.sender] == 1, "Unauthorized Issuer");
@@ -58,18 +71,21 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     /*Setter function to change the issuer term for testing purposes. Should be deleted prior to deployment.
     Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
     function setIssuerInterval(uint newInterval) public onlyOwner {
+        emit IssuerIntervalUpdated(issuerInterval, newInterval);
         issuerInterval = newInterval;
     }
 
     /*Setter function to change the base mint factor for testing purposes.  Should be deleted prior to
     deployment. Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
     function setBaseMintFactor(uint newMintFactor) public onlyOwner {
+        emit BaseMintFactorUpdated(baseMintFactor, newMintFactor);
         baseMintFactor = newMintFactor;
     }
 
     /*Setter function to change the minimum supply for testing purposes.  Should be deleted prior to
     deployment. Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
     function setMinSupply(uint256 newMinSupply) public onlyOwner {
+        emit MinSupplyUpdated(minSupply, newMinSupply);
         minSupply = newMinSupply;
     }
 
@@ -82,6 +98,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         issuers.push(newIssuer);
         isIssuer[newIssuer] = 1;
         issuerData[newIssuer] = Issuer(issuers.length - 1, block.number, block.number + issuerInterval, 0, 0, 0, 0);
+        emit IssuerAuthorized(newIssuer, issuerData[newIssuer].expirationBlock);
     }
 
     /*Deauthorizes a single address as long as it's current an authorized issuer 
@@ -92,6 +109,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         delete isIssuer[existingIssuer];
         totalIssuers--;
         removeIssuerFromArray(existingIssuer);
+        emit IssuerDeauthorized(existingIssuer, msg.sender);
         delete issuerData[existingIssuer];
     }
 
@@ -104,6 +122,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
                 delete isIssuer[expired];
                 totalIssuers--;
                 removeIssuerFromArray(expired);
+                emit IssuerDeauthorized(expired, msg.sender);
                 delete issuerData[expired];
             }
         }
@@ -127,6 +146,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         _mint(to,totalMintAmount);
         issuerData[msg.sender].totalMinted += totalMintAmount;
         issuerData[msg.sender].mintCount++;
+        emit IssuerActivity(msg.sender, totalMintAmount, 0, issuerData[msg.sender].totalMinted, issuerData[msg.sender].totalBurned);
     }
 
     //Added logic to update burn data for issuer
@@ -134,6 +154,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         _burn(msg.sender, amount);
         issuerData[msg.sender].totalBurned +=amount;
         issuerData[msg.sender].burnCount++;
+        emit IssuerActivity(msg.sender, 0, amount, issuerData[msg.sender].totalMinted, issuerData[msg.sender].totalBurned);
     }
 
     //Added logic to update burn data for issuer
