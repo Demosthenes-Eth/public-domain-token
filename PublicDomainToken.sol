@@ -25,6 +25,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         uint256 totalBurned;
     }
 
+    uint256 constant scalingFactor = 1e18;
+    
     //Cap on authorized issuers.
     uint256 public maxIssuers = 10000;
 
@@ -173,16 +175,32 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         uint256 mintCount = issuerData[_issuerAddress].mintCount;
         uint256 burnCount = issuerData[_issuerAddress].burnCount;
         uint256 totalBurned = issuerData[_issuerAddress].totalBurned;
-        //Average tokens minted for each time address has called the mint function
-        uint256 avgMint = (mintCount == 0) ? 0 : totalMinted / mintCount;
-        //Average tokens burned for each time address has called the burn function
-        uint256 avgBurn = (burnCount == 0) ? 0 : totalBurned / burnCount;
+        
         uint256 currentSupply = totalSupply();
+
         if(currentSupply == 0){
             return baseMintFactor;
         }
-        uint256 avgPercentMint = (avgMint * 100) / currentSupply;
-        uint256 mintAdjustedBase = baseMintFactor - avgPercentMint;
+
+        //Average number of tokens minted per mint, scaled by scaling factor
+        uint256 scaledAvgMint = (mintCount == 0) ? 0 : (totalMinted * scalingFactor) / mintCount;
+
+        //Average number of tokens burned per burn, scaled by scaling factor
+        uint256 scaledAvgBurn = (burnCount == 0) ? 0 : (totalBurned * scalingFactor) / burnCount;
+
+        //Average percentage of current total supply minted per mint
+        uint256 scaledAvgPercentMint = (scaledAvgMint * 100) / (scalingFactor * currentSupply);
+        
+        uint256 mintAdjustedBase;
+        
+        //Clip to 0 if scaled avg percent mint is greater than base mint factor
+        if (scaledAvgPercentMint >= baseMintFactor) {
+            mintAdjustedBase = 0;
+        } else {
+            //Reduce base mint factor by the average percentage of current total supply minted per mint
+            mintAdjustedBase = baseMintFactor - scaledAvgPercentMint;
+        }
+
         uint256 burnOffset;
 
         //If address has burned more tokens in aggregate than it has minted
@@ -191,12 +209,12 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
             }
         //If the average number of tokens burned per burn is higher than the
         //average number of tokens minted per mint
-        if (avgMint <= avgBurn){
+        if (scaledAvgMint <= scaledAvgBurn){
             burnOffset+=1;
         }
         //If the average number of tokens minted per mint 
         //is less than 2% of the current supply
-        if (avgPercentMint <= 2){
+        if (scaledAvgPercentMint <= 2){
             burnOffset+=1;
         }
 
