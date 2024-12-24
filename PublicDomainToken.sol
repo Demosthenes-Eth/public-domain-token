@@ -29,7 +29,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     uint256 constant scalingFactor = 1e18;
     
     //Cap on authorized issuers.
-    uint256 public maxIssuers = 10000;
+    uint256 public maxIssuers = 1000;
 
     //Issuer interval is roughly 1 year assuming 12s per block.
     uint256 public issuerInterval = 2628000;
