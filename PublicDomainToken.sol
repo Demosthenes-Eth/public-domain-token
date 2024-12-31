@@ -148,11 +148,17 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
             shortfall = minSupply - currentSupply;
         }
 
-        uint256 totalMintAmount = userRequestedAmount + shortfall;
+        
+        if (currentSupply == 0){
+            //Force user to mint the minimum supply amount if total supply is 0
+            userRequestedAmount = 0;
+        } else {
+            //Amount of tokens requested can't exceed the allowable number of tokens that can be minted 
+            //based on the minter's mint factor
+            require(userRequestedAmount * 100 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
+        }
 
-        //Amount of tokens requested can't exceed the allowable number of tokens that can be minted 
-        //based on the minter's mint factor
-        require(userRequestedAmount * 100 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
+        uint256 totalMintAmount = userRequestedAmount + shortfall;
         
         _mint(to,totalMintAmount);
         issuerData[msg.sender].totalMinted += totalMintAmount;
