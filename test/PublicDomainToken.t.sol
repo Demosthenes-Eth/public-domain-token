@@ -236,15 +236,15 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
         // We’ll artificially roll the block number to issuer1’s expiration
         (
-            ,           // index
-            ,           // startingBlock
-            uint256 expirationBlock,
-            ,           // totalMinted
-            ,           // mintCount
-            ,           // burnCount
-            ,           // totalBurned
+            iIndex,
+            iStartingBlock,
+            iExpirationBlock,
+            iTotalMinted,
+            iMintCount,
+            iBurnCount,
+            iTotalBurned
         ) = token.issuerData(issuer1);
-         vm.roll(expirationBlock + 1); // now past expiration
+         vm.roll(iExpirationBlock + 1); // now past expiration
 
         vm.startPrank(issuer1);
         vm.expectRevert(bytes("Expired Issuer"));
@@ -271,9 +271,18 @@ contract PublicDomainTokenTest is Test {
     function testTransferEmitsEvent() public {
         // We can check the event logs for IssuerAuthorizationTransferred
         token.authorizeIssuer(issuer1);
+        (
+            iIndex,
+            iStartingBlock,
+            iExpirationBlock,
+            iTotalMinted,
+            iMintCount,
+            iBurnCount,
+            iTotalBurned
+        ) = token.issuerData(issuer1);
         vm.startPrank(issuer1);
         vm.expectEmit(true, true, false, true);
-        emit token.IssuerAuthorizationTransferred(issuer1, issuer2, token.issuerData(issuer1).index);
+        emit token.IssuerAuthorizationTransferred(issuer1, issuer2, iIndex);
         token.transferIssuerAuthorization(issuer2);
         vm.stopPrank();
     }
