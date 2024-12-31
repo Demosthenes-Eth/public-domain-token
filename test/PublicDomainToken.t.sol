@@ -272,13 +272,13 @@ contract PublicDomainTokenTest is Test {
         // We can check the event logs for IssuerAuthorizationTransferred
         token.authorizeIssuer(issuer1);
         (
-            iIndex,
-            iStartingBlock,
-            iExpirationBlock,
-            iTotalMinted,
-            iMintCount,
-            iBurnCount,
-            iTotalBurned
+            uint iIndex,
+            uint iStartingBlock,
+            uint iExpirationBlock,
+            uint iTotalMinted,
+            uint iMintCount,
+            uint iBurnCount,
+            uint iTotalBurned
         ) = token.issuerData(issuer1);
         vm.startPrank(issuer1);
         vm.expectEmit(true, true, false, true);
