@@ -135,21 +135,30 @@ contract PublicDomainTokenTest is Test {
     }
 
     function testTransferIssuerAuthorizationCopiesStats() public {   
+        token.authorizeIssuer(issuer1);
         vm.prank(issuer1);
         token.mint(issuer1, 1000); 
         
         // Grab issuer1's data before transferring authorization
-        PublicDomainToken.Issuer memory oldIssuerData = token.issuerData(issuer1);
+        (
+            uint256 iIndex,
+            uint256 iStartingBlock,
+            uint256 iExpirationBlock,
+            uint256 iTotalMinted,
+            uint256 iMintCount,
+            uint256 iBurnCount,
+            uint256 iTotalBurned
+        ) = token.issuerData(issuer1);
 
         // Confirm issuer1’s data was updated
         // totalMinted should be exactly 1,000,000
         assertEq(
-            oldIssuerData.totalMinted,
+            iTotalMinted,
             1_000_000,
             "issuer1's totalMinted should reflect only the shortfall"
         );
         assertEq(
-            oldIssuerData.mintCount,
+            iMintCount,
             1,
             "issuer1's mintCount should have incremented to 1"
         );
@@ -162,35 +171,43 @@ contract PublicDomainTokenTest is Test {
         assertEq(token.isIssuer(issuer1), 0, "old issuer1 should be deauthorized");
 
         // issuer2 should now be authorized
-        assertEq(token.isIssuer(issuer2), 1, "issuer3 should be authorized");
+        assertEq(token.isIssuer(issuer2), 1, "issuer2 should be authorized");
 
         // Check that issuer2 inherited issuer1’s data
-        PublicDomainToken.Issuer memory newIssuerData = token.issuerData(issuer2);
+        (
+            uint256 jIndex,
+            uint256 jStartingBlock,
+            uint256 jExpirationBlock,
+            uint256 jTotalMinted,
+            uint256 jMintCount,
+            uint256 jBurnCount,
+            uint256 jTotalBurned
+        ) = token.issuerData(issuer2);
 
         // All stats, including totalMinted, are copied over
         assertEq(
-            newIssuerData.totalMinted,
-            oldIssuerData.totalMinted,
+            iTotalMinted,
+            jtotalMinted,
             "issuer2 should inherit the totalMinted count"
         );
         assertEq(
-            newIssuerData.mintCount,
-            oldIssuerData.mintCount,
+            iMintCount,
+            jMintCount,
             "issuer2 should inherit the mintCount"
         );
         assertEq(
-            newIssuerData.burnCount,
-            oldIssuerData.burnCount,
+           iBurnCount,
+           jBurnCount,
             "issuer2 should inherit the burnCount"
         );
         assertEq(
-            newIssuerData.totalBurned,
-            oldIssuerData.totalBurned,
+            iTotalBurned,
+            jTotalBurned,
             "issuer2 should inherit the totalBurned"
         );
         assertEq(
-            newIssuerData.index,
-            oldIssuerData.index,
+            iIndex,
+            jIndex,
             "issuer2 should inherit issuer1's index in the issuers array"
         );
     }
