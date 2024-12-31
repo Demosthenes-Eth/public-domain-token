@@ -47,19 +47,19 @@ In an ideal world, anyone can use the token for anything, as long as they consid
 Issuers are special addresses authorized to mint new tokens (up to certain limits) and burn existing tokens. The purpose is to manage token supply under specific conditions.
 
 **3.1 Becoming an Issuer**
-- *`authorizeIssuer(address newIssuer)`*
+- `authorizeIssuer(address newIssuer)`
   - Public function (anyone can call it) that authorizes newIssuer to become an issuer, provided:
     - newIssuer is not already authorized.
     - Total issuer count has not reached maxIssuers.
   - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
 
 **3.2 Losing Issuer Status**
-- *`deauthorizeIssuer(address existingIssuer)`*
+- `deauthorizeIssuer(address existingIssuer)`
   - Public function that deauthorizes an existing issuer if:
     1. The issuer’s authorization has expired or
 	  2. The issuer itself calls this function (self-deauthorization).
   - Once deauthorized, the address is removed from the issuers array and loses mint/burn rights.
-- *`deauthorizeAllExpiredIssuers()`*
+- `deauthorizeAllExpiredIssuers()`
   - Loops through all issuers and automatically removes any that are expired.
 
 **3.3 Transferring Issuer Authorization**
