@@ -49,8 +49,8 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 3.1 Becoming an Issuer
 - authorizeIssuer(address newIssuer)
   - Public function (anyone can call it) that authorizes newIssuer to become an issuer, provided:
-    - newIssuer is not already authorized.
-    - Total issuer count has not reached maxIssuers.
+   - newIssuer is not already authorized.
+   - Total issuer count has not reached maxIssuers.
   - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
 
 3.2 Losing Issuer Status
