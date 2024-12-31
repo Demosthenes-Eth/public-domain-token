@@ -87,10 +87,19 @@ contract PublicDomainTokenTest is Test {
     function testCannotDeauthorizeIssuerBeforeExpiration() public {
         // Authorize an issuer
         token.authorizeIssuer(issuer1);
-
+        vm.startPrank(issuer2);
         // Attempt to deauthorize issuer1 right away
         vm.expectRevert(bytes("Issuer term has not expired"));
         token.deauthorizeIssuer(issuer1);
+        vm.stopPrank();
+
+        // issuer1 should still be authorized
+        // Attempt to deauthorize issuer 1 again as issuer1
+
+        vm.startPrank(issuer1);
+        token.deauthorizeIssuer(issuer1);
+        assertEq(token.isIssuer(issuer1), 0, "Issuer1 should be deauthorized");
+        vm.stopPrank();
     }
 
     // ------------------------------------------------------------------------
