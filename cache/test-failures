@@ -1,1 +1,1 @@
-testIssuerCanBurn|testIssuerCanMint|testMintShortfallIfSupplyBelowMinSupply|testNonOwnerCannotSetIssuerInterval
+testIssuerCanBurn|testIssuerCanMint|testMintShortfallIfSupplyBelowMinSupply
