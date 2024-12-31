@@ -245,7 +245,6 @@ contract PublicDomainTokenTest is Test {
 
     function testNonOwnerCannotSetIssuerInterval() public {
         // Try calling as issuer1
-        token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
 
         vm.expectRevert(
@@ -263,6 +262,20 @@ contract PublicDomainTokenTest is Test {
         vm.prank(owner);
         token.setBaseMintFactor(10);
         assertEq(token.baseMintFactor(), 10, "baseMintFactor not updated");
+        vm.stopPrank();
+
+        // Try calling as issuer1
+        vm.startPrank(issuer1);
+
+        vm.expectRevert(
+        abi.encodeWithSelector(
+            Ownable.OwnableUnauthorizedAccount.selector,
+            issuer1
+        )
+        );
+        token.setBaseMintFactor(10);
+
+        vm.stopPrank();
     }
 
     function testOwnerCanSetMinSupply() public {
