@@ -1,1 +1,1 @@
-testIssuerCanBurn|testIssuerCanMint|testMintShortfallIfSupplyBelowMinSupply
+testMintShortfallIfSupplyBelowMinSupply

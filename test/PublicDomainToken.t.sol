@@ -161,8 +161,8 @@ contract PublicDomainTokenTest is Test {
         //    userRequested = 1,000
         //    totalMintAmount = 1,000,000 + 1,000 = 1,001,000
         // ----------------------------------------------------------------------
-        token.authorizeIssuer(issuer1);
-        vm.startPrank(issuer1);
+        token.authorizeIssuer(issuer2);
+        vm.startPrank(issuer2);
 
         token.mint(user1, 1_000); 
         vm.stopPrank();
