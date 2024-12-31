@@ -187,7 +187,7 @@ contract PublicDomainTokenTest is Test {
         // All stats, including totalMinted, are copied over
         assertEq(
             iTotalMinted,
-            jtotalMinted,
+            jTotalMinted,
             "issuer2 should inherit the totalMinted count"
         );
         assertEq(
