@@ -54,16 +54,16 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
   - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
 
 **3.2 Losing Issuer Status**
-- *deauthorizeIssuer(address existingIssuer)*
+- *`deauthorizeIssuer(address existingIssuer)`*
   - Public function that deauthorizes an existing issuer if:
     1. The issuer’s authorization has expired or
 	  2. The issuer itself calls this function (self-deauthorization).
   - Once deauthorized, the address is removed from the issuers array and loses mint/burn rights.
-- *deauthorizeAllExpiredIssuers()*
+- *`deauthorizeAllExpiredIssuers()`*
   - Loops through all issuers and automatically removes any that are expired.
 
 **3.3 Transferring Issuer Authorization**
-- *transferIssuerAuthorization(address newIssuer)*
+- *`transferIssuerAuthorization(address newIssuer)`*
   - Allows an existing (non-expired) issuer to transfer its issuer status to a new address.
   - The old issuer’s data (like total minted, burn counts, etc.) is copied to the new address, but the old issuer is deauthorized.
   - Transfer conditions:
@@ -72,17 +72,17 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
     - The old issuer must still be unexpired.
 
 **3.4 Expiration Logic**
-- Each issuer has an expirationBlock. The default “term” for an issuer is issuerInterval blocks.
+- Each issuer has an `expirationBlock`. The default “term” for an issuer is issuerInterval blocks.
 - If the current block is beyond an issuer’s expirationBlock, that issuer is considered expired and cannot mint or burn.
-- The owner can set issuerInterval (for testing or dynamic changes).
+- The owner can set `issuerInterval` (for testing or dynamic changes).
 
 ### 4. Minting Tokens
 
-- *mint(address to, uint256 userRequestedAmount)* (only callable by non-expired issuers)
-	1.	If totalSupply() == 0, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
-	2.	Otherwise, the contract checks that userRequestedAmount > 0 and does not exceed (currentSupply * mintFactor) / 100.
-	3.	If currentSupply < minSupply, a shortfall is automatically added to meet minSupply.
-	4.	Finally, tokens are minted to to.
+- *`mint(address to, uint256 userRequestedAmount)`* (only callable by non-expired issuers)
+	1.	If `totalSupply()` == 0, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
+	2.	Otherwise, the contract checks that `userRequestedAmount` > 0 and does not exceed (currentSupply * mintFactor) / 100.
+	3.	If `currentSupply` < `minSupply`, a shortfall is automatically added to meet `minSupply`.
+	4.	Finally, tokens are minted to `to`.
 
 **Key Points:**
 - Only an authorized, non-expired issuer can call mint.
@@ -92,52 +92,52 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 ### 5. Burning Tokens
 
 Issuers can burn tokens:
-	1.	*burn(uint256 amount)*
+	1.	*`burn(uint256 amount)`*
     - Burns tokens from the issuer’s own balance.
-	2.	burnFrom(address account, uint256 amount)
+	2.	*`burnFrom(address account, uint256 amount)`*
     - Burns tokens from account, provided the issuer has enough allowance from that account.
 
-Both functions update the issuer’s totalBurned and burnCount.
+Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 ### 6. Owner-Only Settings
 	
-1. *setIssuerInterval(uint newInterval)*
+1. *`setIssuerInterval(uint newInterval)`*
   - Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
-2. *setBaseMintFactor(uint newMintFactor)*
+2. *`setBaseMintFactor(uint newMintFactor)`*
   - Changes the base percentage limit (like 5%) for how much an issuer can mint relative to supply.
-3. *setMinSupply(uint256 newMinSupply)*
+3. *`setMinSupply(uint256 newMinSupply)`*
   - Changes the minimum supply enforced when the supply is zero.
 
 	**Note:** The contract comments suggest these setters are only for testing and ideally removed before production, or at least restricted to the owner only.
 
 ### 7. ERC20 Permit and Votes
 
-- ERC20Permit allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
-- ERC20Votes adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
+- `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
+- `ERC20Votes` adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
 
 ### 8. Frequently Asked Questions
 
-1. Who can call authorizeIssuer?
+1. Who can call `authorizeIssuer`?
   - Anyone can call it, but the contract reverts if the address is already authorized or if maxIssuers is reached.
-2. Why does the contract force minSupply on first mint?
+2. Why does the contract force `minSupply` on first mint?
   - It ensures there’s a baseline liquidity of tokens whenever the supply is zero.
 3. What happens if an issuer’s term expires?
-  - The issuer can no longer call mint or burn. They can be deauthorized by anyone calling deauthorizeIssuer(issuer) or automatically by deauthorizeAllExpiredIssuers().
+  - The issuer can no longer call mint or burn. They can be deauthorized by anyone calling `deauthorizeIssuer(issuer)` or automatically by `deauthorizeAllExpiredIssuers()`.
 4. Does the contract owner automatically become an issuer?
   - No, being the owner does not make you an issuer by default. The owner can adjust parameters but must explicitly authorize themselves if they want to mint/burn.
 5. Can users see who is an issuer?
-  - Yes, the contract exposes an array of all issuers, plus you can query isIssuer(address).
+  - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
 
 ### 9. Summary
 
-- PublicDomainToken (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
+- `Public Domain Token` (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 - Issuers can be added or removed, ensuring flexible but controlled supply management.
 - Owner can fine-tune issuer intervals, minimum supply, and base mint factors.
 - Users enjoy standard ERC20 features, plus gasless approvals (Permit) and voting capabilities (Votes).
 
 ### Additional Resources
 
-- **Functions:** You can explore the contract code directly or consult developer docs for ERC20, ERC20Permit, and ERC20Votes.
+- **Functions:** You can explore the contract code directly or consult developer docs for `ERC20`, `ERC20Permit`, and `ERC20Votes`.
 - **Security:** Always ensure you understand the roles and privileges of owners/issuers before engaging with the token.
 
 Use this document as a quick reference to understand how the token supply mechanics and issuer system work.
