@@ -17,6 +17,12 @@ contract PublicDomainTokenTest is Test {
     address internal issuer2 = address(102);
     address internal user1   = address(103);
 
+    event IssuerAuthorizationTransferred(
+        address indexed oldIssuer,
+        address indexed newIssuer,
+        uint256 issuerIndex
+    );
+
     function setUp() public {
         // Deploy the contract with `owner` as the initialOwner
         vm.prank(owner);
