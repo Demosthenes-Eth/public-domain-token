@@ -236,13 +236,13 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
         // We’ll artificially roll the block number to issuer1’s expiration
         (
-            iIndex,
-            iStartingBlock,
-            iExpirationBlock,
-            iTotalMinted,
-            iMintCount,
-            iBurnCount,
-            iTotalBurned
+            uint iIndex,
+            uint iStartingBlock,
+            uint iExpirationBlock,
+            uint iTotalMinted,
+            uint iMintCount,
+            uint iBurnCount,
+            uint iTotalBurned
         ) = token.issuerData(issuer1);
          vm.roll(iExpirationBlock + 1); // now past expiration
 
