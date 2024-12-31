@@ -235,7 +235,15 @@ contract PublicDomainTokenTest is Test {
     function testTransferFailsIfCallerIsExpired() public {
         token.authorizeIssuer(issuer1);
         // We’ll artificially roll the block number to issuer1’s expiration
-        uint256 expirationBlock = token.issuerData(issuer1).expirationBlock;
+        (
+            ,           // index
+            ,           // startingBlock
+            uint256 expirationBlock,
+            ,           // totalMinted
+            ,           // mintCount
+            ,           // burnCount
+            ,           // totalBurned
+        ) = token.issuerData(issuer1);
          vm.roll(expirationBlock + 1); // now past expiration
 
         vm.startPrank(issuer1);
