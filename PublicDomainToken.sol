@@ -105,7 +105,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     }
 
     //Internal helper function to deauthorize a single address
-    function authorizeIssuerInternal(address newIssuer, Issuer calldata _issuerData) private {
+    function authorizeIssuerInternal(address newIssuer, Issuer memory _issuerData) private {
         issuers[_issuerData.index] = newIssuer;
         issuerData[newIssuer] = _issuerData;
         isIssuer[newIssuer] = 1;
@@ -118,9 +118,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         require(newIssuer != address(0), "Cannot transfer authorization to address(0)");
         require(newIssuer != address(this), "Cannot transfer authorization to contract address");
 
-        issuerData[newIssuer] = Issuer(issuerData[msg.sender].index, issuerData[msg.sender].startingBlock, issuerData[msg.sender].expirationBlock, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
+        Issuer memory newIssuerData = Issuer(issuerData[msg.sender].index, issuerData[msg.sender].startingBlock, issuerData[msg.sender].expirationBlock, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
         deauthorizeIssuerInternal(msg.sender);
-        authorizeIssuerInternal(newIssuer, issuerData[newIssuer]);
+        authorizeIssuerInternal(newIssuer, newIssuerData);
         emit IssuerAuthorizationTransferred(msg.sender, newIssuer, issuerData[newIssuer].index);
     }
 
