@@ -105,7 +105,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     }
 
     //Internal helper function to deauthorize a single address
-    function authorizeIssuerInternal(address newIssuer, Issuer _issuerData) private {
+    function authorizeIssuerInternal(address newIssuer, Issuer calldata _issuerData) private {
         issuers[_issuerData.index] = newIssuer;
         issuerData[newIssuer] = _issuerData;
         isIssuer[newIssuer] = 1;

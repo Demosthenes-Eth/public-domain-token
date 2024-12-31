@@ -238,7 +238,7 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
         vm.expectEmit(true, true, false, true);
-        emit IssuerAuthorizationTransferred(issuer1, issuer2, token.issuerData(issuer1).index);
+        emit token.IssuerAuthorizationTransferred(issuer1, issuer2, token.issuerData(issuer1).index);
         token.transferIssuerAuthorization(issuer2);
         vm.stopPrank();
     }
