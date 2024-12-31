@@ -1,6 +1,6 @@
 # public-domain-token
 ## Introduction
-An open ERC20 token with public permissioned minting.
+`Public Domain Token` is an open ERC20 token with public permissioned minting.
 
 Usually when someone launches an ERC20 token, if the total capped supply is not minted during contract deployment, issuance will be generated via staking, mining, or direct manual minting through a governance contract.  In most cases, issuance is controlled by one party, even if that party abdicates their control after issuance has completed.  In these instances, the token is usually issued for a specific purpose, whether to facilitate governance over a specific DAO or on-chain product, to serve as a medium of exchange for a specific product, etc.  And in most cases, the token issuer is usually a stakeholder in whatever the token utility is intended to be.
 
