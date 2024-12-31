@@ -192,7 +192,12 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(
+        abi.encodeWithSelector(
+            OwnableUnauthorizedAccount.selector,
+            issuer1
+        )
+        );
         token.setIssuerInterval(123456);
 
         vm.stopPrank();
