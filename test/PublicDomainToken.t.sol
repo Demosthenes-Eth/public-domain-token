@@ -241,6 +241,20 @@ contract PublicDomainTokenTest is Test {
 
         assertEq(token.issuerInterval(), newInterval, "Issuer interval not updated");
         assertTrue(token.issuerInterval() != oldInterval, "Issuer interval should change");
+        vm.stopPrank();
+
+        // Try calling as issuer1
+        vm.startPrank(issuer1);
+
+        vm.expectRevert(
+        abi.encodeWithSelector(
+            Ownable.OwnableUnauthorizedAccount.selector,
+            issuer1
+        )
+        );
+        token.setIssuerInterval(newInterval);
+
+        vm.stopPrank();
     }
 
     function testNonOwnerCannotSetIssuerInterval() public {
@@ -282,6 +296,20 @@ contract PublicDomainTokenTest is Test {
         vm.prank(owner);
         token.setMinSupply(2_000_000);
         assertEq(token.minSupply(), 2_000_000, "minSupply not updated");
+        vm.stopPrank();
+
+        // Try calling as issuer1
+        vm.startPrank(issuer1);
+
+        vm.expectRevert(
+        abi.encodeWithSelector(
+            Ownable.OwnableUnauthorizedAccount.selector,
+            issuer1
+        )
+        );
+        token.setMinSupply(1000000);
+
+        vm.stopPrank();
     }
 
     // ------------------------------------------------------------------------
