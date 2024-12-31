@@ -1,5 +1,5 @@
 # public-domain-token
-# context
+## context
 An open ERC20 token with public permissioned minting.
 
 Usually when someone launches an ERC20 token, if the total capped supply is not minted during contract deployment, issuance will be generated via staking, mining, or direct manual minting through a governance contract.  In most cases, issuance is controlled by one party, even if that party abdicates their control after issuance has completed.  In these instances, the token is usually issued for a specific purpose, whether to facilitate governance over a specific DAO or on-chain product, to serve as a medium of exchange for a specific product, etc.  And in most cases, the token issuer is usually a stakeholder in whatever the token utility is intended to be.
@@ -12,25 +12,25 @@ After deployment, the ownership of the contract will be transferred to itself.  
 
 In an ideal world, anyone can use the token for anything, as long as they consider the fact that they will not be the only authorized issuer at any given time.  This introduces some interesting new areas for experimentation and game theory.  Will issuers coordinate and collaborate to maintain the health of the token ecosystem and all of the various connected stakeholders?  Or will the issuer ecosystem quickly devolve into pure PvP?
 
-# documentation
+## documentation
 
-1. Overview
-	•	Name: Public Domain Token
-	•	Symbol: PDoT
-	•	Token Standard: ERC20 (with additional capabilities)
-	•	Core Features:
+### 1. Overview
+	•	**Name:** Public Domain Token
+	•	**Symbol:** PDoT
+	•	**Token Standard:** ERC20 (with additional capabilities)
+	•	**Core Features:**
 	•	Standard ERC20 transfers.
 	•	ERC20Permit (gasless approvals).
 	•	ERC20Votes (voting/polling capabilities).
 	•	Burnable by authorized issuers.
 	•	Special “issuer” system for minting and burning tokens.
 
-Important: The contract has additional controls and logic that differ from a typical ERC20:
+**Important:** The contract has additional controls and logic that differ from a typical ERC20:
 	1.	Min Supply: If total supply is 0, the first mint automatically brings supply up to a minimum threshold.
 	2.	Issuers: Certain authorized addresses can mint/burn under constraints.
 	3.	Owner: The contract has a single owner who can adjust certain parameters (like intervals, min supply, etc.).
 
-2. Basic ERC20 Functionality
+### 2. Basic ERC20 Functionality
 
 2.1 Transferring Tokens
 	•	Like any ERC20, you can send tokens from your address to another via the standard transfer and transferFrom methods.
@@ -41,7 +41,7 @@ Important: The contract has additional controls and logic that differ from a typ
 	•	Query allowances using allowance(address,address)
 	•	Increase or decrease allowances using approve, increaseAllowance, or decreaseAllowance.
 
-3. Issuer System
+### 3. Issuer System
 
 Issuers are special addresses authorized to mint new tokens (up to certain limits) and burn existing tokens. The purpose is to manage token supply under specific conditions.
 
@@ -75,7 +75,7 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 	•	If the current block is beyond an issuer’s expirationBlock, that issuer is considered expired and cannot mint or burn.
 	•	The owner can set issuerInterval (for testing or dynamic changes).
 
-4. Minting Tokens
+### 4. Minting Tokens
 	•	mint(address to, uint256 userRequestedAmount) (only callable by non-expired issuers)
 	1.	If totalSupply() == 0, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
 	2.	Otherwise, the contract checks that userRequestedAmount > 0 and does not exceed (currentSupply * mintFactor) / 100.
@@ -87,7 +87,7 @@ Key Points:
 	•	If supply is zero, the minted amount is exactly minSupply.
 	•	Otherwise, the issuer can only mint up to a fraction (up to baseMintFactor%) of the current supply, with additional dynamic logic to adjust that factor.
 
-5. Burning Tokens
+### 5. Burning Tokens
 
 Issuers can burn tokens:
 	1.	burn(uint256 amount)
@@ -97,7 +97,7 @@ Issuers can burn tokens:
 
 Both functions update the issuer’s totalBurned and burnCount.
 
-6. Owner-Only Settings
+### 6. Owner-Only Settings
 	1.	setIssuerInterval(uint newInterval)
 	•	Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
 	2.	setBaseMintFactor(uint newMintFactor)
@@ -107,11 +107,11 @@ Both functions update the issuer’s totalBurned and burnCount.
 
 	Note: The contract comments suggest these setters are only for testing and ideally removed before production, or at least restricted to the owner only.
 
-7. ERC20 Permit and Votes
+### 7. ERC20 Permit and Votes
 	•	ERC20Permit allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
 	•	ERC20Votes adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
 
-8. Frequently Asked Questions
+### 8. Frequently Asked Questions
 	1.	Who can call authorizeIssuer?
 Anyone can call it, but the contract reverts if the address is already authorized or if maxIssuers is reached.
 	2.	Why does the contract force minSupply on first mint?
@@ -123,13 +123,13 @@ No, being the owner does not make you an issuer by default. The owner can adjust
 	5.	Can users see who is an issuer?
 Yes, the contract exposes an array of all issuers, plus you can query isIssuer(address).
 
-9. Summary
+### 9. Summary
 	•	PublicDomainToken (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 	•	Issuers can be added or removed, ensuring flexible but controlled supply management.
 	•	Owner can fine-tune issuer intervals, minimum supply, and base mint factors.
 	•	Users enjoy standard ERC20 features, plus gasless approvals (Permit) and voting capabilities (Votes).
 
-Additional Resources
+### Additional Resources
 	•	Functions: You can explore the contract code directly or consult developer docs for ERC20, ERC20Permit, and ERC20Votes.
 	•	Security: Always ensure you understand the roles and privileges of owners/issuers before engaging with the token.
 
