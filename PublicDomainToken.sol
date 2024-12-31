@@ -52,6 +52,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
 
     event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
     event IssuerDeauthorized(address indexed issuer, address indexed deauthorizer);
+    event IssuerAuthorizationTransferred(address indexed oldIssuer, address indexed newIssuer, uint256 issuerIndex);
     event IssuerActivity(
         address indexed issuer,
         uint256 minted,
@@ -103,6 +104,27 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         emit IssuerAuthorized(newIssuer, issuerData[newIssuer].expirationBlock);
     }
 
+    //Internal helper function to deauthorize a single address
+    function authorizeIssuerInternal(address newIssuer, Issuer _issuerData) internal private {
+        issuers[issuerData.index] = newIssuer;
+        isIssuer[newIssuer] = 1;
+        issuerData[newIssuer] = _issuerData;
+    }
+
+    function transferIssuerAuthorization(address newIssuer) public onlyIssuer {
+        require(isIssuer[msg.sender] == 1, "Msg.sender is not an authorized issuer");
+        require(isIssuer[newIssuer] == 0, "Address is already authorized");
+        require(block.number < issuerData[msg.sender].expirationBlock, "Issuer term has expired");
+        require(msg.sender != address(0), "Cannot transfer authorization to address(0)");
+        require(msg.sender != address(this), "Cannot transfer authorization to contract address");
+
+        issuerData[newIssuer] = Issuer(issuerData[msg.sender].index, block.number, block.number + issuerInterval, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
+        deauthorizeIssuerInternal(msg.sender);
+        authorizeIssuerInternal(newIssuer, issuerData[newIssuer]);
+        emit IssuerAuthorizationTransferred(msg.sender, newIssuer, issuerData[newIssuer].index);
+
+    }
+
     /*Deauthorizes a single address as long as it's current an authorized issuer 
     and its experiation has passed*/
     function deauthorizeIssuer(address existingIssuer) public {
@@ -112,6 +134,12 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         totalIssuers--;
         removeIssuerFromArray(existingIssuer);
         emit IssuerDeauthorized(existingIssuer, msg.sender);
+        delete issuerData[existingIssuer];
+    }
+
+    //Internal helper function to deauthorize a single address
+    function deauthorizeIssuerInternal(address existingIssuer) internal private {
+        delete isIssuer[existingIssuer];
         delete issuerData[existingIssuer];
     }
 
