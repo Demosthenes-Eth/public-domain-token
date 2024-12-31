@@ -67,16 +67,18 @@ contract PublicDomainTokenTest is Test {
     }
 
     function testDeauthorizeIssuerAfterExpiration() public {
-        // Authorize an issuer, then move blocks forward to simulate expiration
+        // Authorize an issuer
         token.authorizeIssuer(issuer1);
 
-        // By default, `expirationBlock` = current block + issuerInterval.
-        // Let’s move beyond that block to allow deauthorization.
-        uint256 expirationBlock = token.issuerData(issuer1).expirationBlock;
-        vm.roll(expirationBlock);       // Set block.number = expirationBlock
-        vm.roll(block.number + 1);      // Move 1 more block so block.number > expirationBlock
+        // We get back a tuple with 7 fields: 
+        // (index, startingBlock, expirationBlock, totalMinted, mintCount, burnCount, totalBurned)
+        (, , uint256 expirationBlock, , , , ) = token.issuerData(issuer1);
 
-        // Now we can deauthorize
+        // Advance the block beyond expirationBlock
+        vm.roll(expirationBlock);
+        vm.roll(block.number + 1);
+
+        // Now deauthorize
         token.deauthorizeIssuer(issuer1);
         assertEq(token.isIssuer(issuer1), 0, "Issuer1 should be deauthorized");
         assertEq(token.totalIssuers(), 0, "Total issuers should decrement");
