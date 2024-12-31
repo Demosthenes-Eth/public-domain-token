@@ -115,10 +115,20 @@ contract PublicDomainTokenTest is Test {
         // issuer2 should now be an issuer
         assertEq(token.isIssuer(issuer2), 1, "issuer2 should be newly authorized");
 
+        (
+            uint256 iIndex,
+            uint256 iStartingBlock,
+            uint256 iExpirationBlock,
+            uint256 iTotalMinted,
+            uint256 iMintCount,
+            uint256 iBurnCount,
+            uint256 iTotalBurned
+        ) = token.issuerData(issuer2);
+
         // The index, totalMinted, etc. from issuer1 should have transferred to issuer2
         // Let's verify the index at least:
         assertEq(
-            token.issuerData(issuer2).index,
+            iIndexndex,
             0, // Because issuer1 had index 0 when we first authorized it (assuming it was the first authorized)
             "issuer2 should have inherited issuer1's original index"
         );
