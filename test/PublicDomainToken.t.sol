@@ -102,6 +102,147 @@ contract PublicDomainTokenTest is Test {
         vm.stopPrank();
     }
 
+    function testTransferAuthorizationShouldSucceed() public {
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+        // Transfer issuer1's authorization to issuer2
+        token.transferIssuerAuthorization(issuer2);
+        vm.stopPrank();
+
+        // Now issuer1 should NOT be an issuer
+        assertEq(token.isIssuer(issuer1), 0, "issuer1 should no longer be an issuer");
+
+        // issuer2 should now be an issuer
+        assertEq(token.isIssuer(issuer2), 1, "issuer2 should be newly authorized");
+
+        // The index, totalMinted, etc. from issuer1 should have transferred to issuer2
+        // Let's verify the index at least:
+        assertEq(
+            token.issuerData(issuer2).index,
+            0, // Because issuer1 had index 0 when we first authorized it (assuming it was the first authorized)
+            "issuer2 should have inherited issuer1's original index"
+        );
+    }
+
+    function testTransferIssuerAuthorizationCopiesStats() public {   
+        vm.prank(issuer1);
+        token.mint(issuer1, 1000); 
+        
+        // Grab issuer1's data before transferring authorization
+        PublicDomainToken.Issuer memory oldIssuerData = token.issuerData(issuer1);
+
+        // Confirm issuer1’s data was updated
+        // totalMinted should be exactly 1,000,000
+        assertEq(
+            oldIssuerData.totalMinted,
+            1_000_000,
+            "issuer1's totalMinted should reflect only the shortfall"
+        );
+        assertEq(
+            oldIssuerData.mintCount,
+            1,
+            "issuer1's mintCount should have incremented to 1"
+        );
+
+        // Transfer authorization from issuer1 -> issuer2
+        vm.prank(issuer1);
+        token.transferIssuerAuthorization(issuer2);
+
+        // issuer1 should now be deauthorized
+        assertEq(token.isIssuer(issuer1), 0, "old issuer1 should be deauthorized");
+
+        // issuer2 should now be authorized
+        assertEq(token.isIssuer(issuer2), 1, "issuer3 should be authorized");
+
+        // Check that issuer2 inherited issuer1’s data
+        PublicDomainToken.Issuer memory newIssuerData = token.issuerData(issuer2);
+
+        // All stats, including totalMinted, are copied over
+        assertEq(
+            newIssuerData.totalMinted,
+            oldIssuerData.totalMinted,
+            "issuer2 should inherit the totalMinted count"
+        );
+        assertEq(
+            newIssuerData.mintCount,
+            oldIssuerData.mintCount,
+            "issuer2 should inherit the mintCount"
+        );
+        assertEq(
+            newIssuerData.burnCount,
+            oldIssuerData.burnCount,
+            "issuer2 should inherit the burnCount"
+        );
+        assertEq(
+            newIssuerData.totalBurned,
+            oldIssuerData.totalBurned,
+            "issuer2 should inherit the totalBurned"
+        );
+        assertEq(
+            newIssuerData.index,
+            oldIssuerData.index,
+            "issuer2 should inherit issuer1's index in the issuers array"
+        );
+    }
+
+    function testTransferFailsIfNewIssuerIsAlreadyAuthorized() public {
+            // issuer2 is already an issuer, so transferring issuer1’s authorization to issuer2 should revert
+            token.authorizeIssuer(issuer1);
+            token.authorizeIssuer(issuer2);
+
+            vm.startPrank(issuer1);
+            vm.expectRevert(bytes("Address is already authorized"));
+            token.transferIssuerAuthorization(issuer2);
+            vm.stopPrank();
+    }
+
+    function testTransferFailsIfCallerIsNotAnIssuer() public {
+        token.authorizeIssuer(issuer1);
+        // user1 is not an issuer, tries to transfer
+        vm.startPrank(user1);
+        vm.expectRevert(bytes("Unauthorized Issuer"));
+        token.transferIssuerAuthorization(issuer2);
+        vm.stopPrank();
+    }
+
+    function testTransferFailsIfCallerIsExpired() public {
+        token.authorizeIssuer(issuer1);
+        // We’ll artificially roll the block number to issuer1’s expiration
+        uint256 expirationBlock = token.issuerData(issuer1).expirationBlock;
+         vm.roll(expirationBlock + 1); // now past expiration
+
+        vm.startPrank(issuer1);
+        vm.expectRevert(bytes("Expired Issuer"));
+        token.transferIssuerAuthorization(issuer2);
+        vm.stopPrank();
+    }
+
+    function testTransferFailsIfNewIssuerIsZeroAddress() public {
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+        vm.expectRevert(bytes("Cannot transfer authorization to address(0)"));
+        token.transferIssuerAuthorization(address(0));
+        vm.stopPrank();
+    }
+
+    function testTransferFailsIfNewIssuerIsContractItself() public {
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+        vm.expectRevert(bytes("Cannot transfer authorization to contract address"));
+        token.transferIssuerAuthorization(address(token));
+        vm.stopPrank();
+    }
+
+    function testTransferEmitsEvent() public {
+        // We can check the event logs for IssuerAuthorizationTransferred
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+        vm.expectEmit(true, true, false, true);
+        emit IssuerAuthorizationTransferred(issuer1, issuer2, token.issuerData(issuer1).index);
+        token.transferIssuerAuthorization(issuer2);
+        vm.stopPrank();
+    }
+
     // ------------------------------------------------------------------------
     // Mint tests
     // ------------------------------------------------------------------------
