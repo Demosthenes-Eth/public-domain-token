@@ -101,19 +101,29 @@ contract PublicDomainTokenTest is Test {
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
 
-        // Start acting as issuer1
+        // Act as issuer1
         vm.startPrank(issuer1);
 
-        // Mint tokens to user1
-        // baseMintFactor defaults to 5, meaning up to 5% of total supply can be minted in one go
-        // Since totalSupply is 0 at the very beginning, the contract has special handling 
-        // (if currentSupply == 0, it just uses baseMintFactor).
+        // currentSupply == 0
+        // Because your new logic says: if supply == 0, disregard userRequestedAmount
+        // and mint exactly `minSupply` (1,000,000).
         token.mint(user1, 1000);
 
         vm.stopPrank();
 
-        // Check user1's new balance
-        assertEq(token.balanceOf(user1), 1000, "User1 should have 1000 tokens");
+        // We now expect user1 to have 1,000,000 tokens (not 1,001,000).
+        assertEq(
+            token.balanceOf(user1),
+            1_000_000,
+            "User1 should have 1,000,000 tokens"
+        );
+
+        // Total supply is also 1,000,000
+        assertEq(
+            token.totalSupply(),
+            1_000_000,
+            "Total supply should be 1,000,000"
+        );
     }
 
     function testCannotMintIfNotIssuer() public {
@@ -123,23 +133,54 @@ contract PublicDomainTokenTest is Test {
     }
 
     function testMintShortfallIfSupplyBelowMinSupply() public {
-        // The default minSupply is 1,000,000. 
-        // Let's test that if totalSupply < minSupply, 
-        // shortfall is automatically added to the minted amount.
-
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
 
-        // totalSupply is 0 now, so shortfall = minSupply (1,000,000).
-        // userRequestedAmount = 1000. 
-        // totalMintAmount = 1000 + 1,000,000 = 1,001,000
-        token.mint(user1, 1000);
-
+        // ----------------------------------------------------------------------
+        // 1) First mint from zero supply
+        //    supply == 0 => contract ignores userRequested(500)
+        //    and mints exactly minSupply(1,000,000).
+        // ----------------------------------------------------------------------
+        token.mint(issuer1, 500); 
+        // Now totalSupply == 1,000,000
+        // issuer1 balance == 1,000,000
         vm.stopPrank();
 
-        assertEq(token.balanceOf(user1), 1_001_000, "Balance should include the shortfall");
-        assertEq(token.totalSupply(), 1_001_000, "Total supply should match minted amount");
+        // ----------------------------------------------------------------------
+        // 2) Increase minSupply to 2,000,000
+        //    so totalSupply(1,000,000) < new minSupply(2,000,000)
+        // ----------------------------------------------------------------------
+        vm.prank(owner);
+        token.setMinSupply(2_000_000);
+
+        // ----------------------------------------------------------------------
+        // 3) Mint again from a non-zero supply
+        //    Now supply(1,000,000) < minSupply(2,000,000)
+        //    shortfall = 2,000,000 - 1,000,000 = 1,000,000
+        //    userRequested = 1,000
+        //    totalMintAmount = 1,000,000 + 1,000 = 1,001,000
+        // ----------------------------------------------------------------------
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+
+        token.mint(user1, 1_000); 
+        vm.stopPrank();
+
+        // user1 got 1,001,000
+        // totalSupply = 1,000,000 (first mint) + 1,001,000 (second mint) = 2,001,000
+
+        assertEq(
+            token.balanceOf(user1),
+            1_001_000,
+            "Balance should be 1,001,000"
+        );
+
+        assertEq(
+            token.totalSupply(),
+            2_001_000,
+            "Total supply should be 2,001,000"
+        );
     }
 
     // ------------------------------------------------------------------------
@@ -147,20 +188,26 @@ contract PublicDomainTokenTest is Test {
     // ------------------------------------------------------------------------
 
     function testIssuerCanBurn() public {
-        // Authorize issuer1, mint first, then burn
+        // Authorize issuer1
         token.authorizeIssuer(issuer1);
 
         vm.startPrank(issuer1);
-        token.mint(issuer1, 2000);
-        // issuer1 now has 1,002,000 if it was the very first mint, or 2000 if supply was already above minSupply.
-        // Let's assume for demonstration that totalSupply was above minSupply, so no shortfall added. 
-        // This detail depends on prior test states if you run them together.
-        
-        token.burn(1000);
+
+        // currentSupply == 0 => mint = minSupply(1,000,000), ignoring userRequested(2,000).
+        token.mint(issuer1, 2_000);
+
+        // issuer1 now has 1,000,000
+        // Burn 1,000 => final = 999,000
+        token.burn(1_000);
+
         vm.stopPrank();
 
-        // issuer1 minted 2000, then burned 1000, net is 1000
-        assertEq(token.balanceOf(issuer1), 1000, "issuer1 should have burned 1000 tokens");
+        // issuer1's final balance is 999,000
+        assertEq(
+            token.balanceOf(issuer1),
+            999_000,
+            "issuer1 should have 999,000 after burning 1,000"
+        );
     }
 
     function testNonIssuerCannotBurn() public {
