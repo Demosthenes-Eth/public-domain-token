@@ -128,7 +128,7 @@ contract PublicDomainTokenTest is Test {
         // The index, totalMinted, etc. from issuer1 should have transferred to issuer2
         // Let's verify the index at least:
         assertEq(
-            iIndexndex,
+            iIndex,
             0, // Because issuer1 had index 0 when we first authorized it (assuming it was the first authorized)
             "issuer2 should have inherited issuer1's original index"
         );
