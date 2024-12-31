@@ -27,9 +27,9 @@ In an ideal world, anyone can use the token for anything, as long as they consid
 
 **Important:** The contract has additional controls and logic that differ from a typical ERC20:
 
-	1.	**Min Supply:** If total supply is 0, the first mint automatically brings supply up to a minimum threshold.
-	2.	**Issuers:** Certain authorized addresses can mint/burn under constraints.
-	3.	**Owner:** The contract has a single owner who can adjust certain parameters (like intervals, min supply, etc.).
+1. **Min Supply:** If total supply is 0, the first mint automatically brings supply up to a minimum threshold.
+2. **Issuers:** Certain authorized addresses can mint/burn under constraints.
+3. **Owner:** The contract has a single owner who can adjust certain parameters (like intervals, min supply, etc.).
 
 ### 2. Basic ERC20 Functionality
 
@@ -48,19 +48,19 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 
 3.1 Becoming an Issuer
 - authorizeIssuer(address newIssuer)
-- Public function (anyone can call it) that authorizes newIssuer to become an issuer, provided:
-  - newIssuer is not already authorized.
-  - Total issuer count has not reached maxIssuers.
-- Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
+  - Public function (anyone can call it) that authorizes newIssuer to become an issuer, provided:
+    - newIssuer is not already authorized.
+    - Total issuer count has not reached maxIssuers.
+  - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
 
 3.2 Losing Issuer Status
 - deauthorizeIssuer(address existingIssuer)
-- Public function that deauthorizes an existing issuer if:
-  1. The issuer’s authorization has expired or
-	2. The issuer itself calls this function (self-deauthorization).
-- Once deauthorized, the address is removed from the issuers array and loses mint/burn rights.
+  - Public function that deauthorizes an existing issuer if:
+    1. The issuer’s authorization has expired or
+	  2. The issuer itself calls this function (self-deauthorization).
+  - Once deauthorized, the address is removed from the issuers array and loses mint/burn rights.
 - deauthorizeAllExpiredIssuers()
-- Loops through all issuers and automatically removes any that are expired.
+  - Loops through all issuers and automatically removes any that are expired.
 
 3.3 Transferring Issuer Authorization
 - transferIssuerAuthorization(address newIssuer)
