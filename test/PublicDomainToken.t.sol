@@ -194,7 +194,7 @@ contract PublicDomainTokenTest is Test {
 
         vm.expectRevert(
         abi.encodeWithSelector(
-            OwnableUnauthorizedAccount.selector,
+            Ownable.OwnableUnauthorizedAccount.selector,
             issuer1
         )
         );
