@@ -107,7 +107,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     and its experiation has passed*/
     function deauthorizeIssuer(address existingIssuer) public {
         require (isIssuer[existingIssuer] == 1, "Address is not an authorized issuer");
-        require (block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
+        require (msg.sender == existingIssuer || block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
         delete isIssuer[existingIssuer];
         totalIssuers--;
         removeIssuerFromArray(existingIssuer);
