@@ -15,15 +15,15 @@ In an ideal world, anyone can use the token for anything, as long as they consid
 ## documentation
 
 ### 1. Overview
-	•	**Name:** Public Domain Token
-	•	**Symbol:** PDoT
-	•	**Token Standard:** ERC20 (with additional capabilities)
-	•	**Core Features:**
-	•	Standard ERC20 transfers.
-	•	ERC20Permit (gasless approvals).
-	•	ERC20Votes (voting/polling capabilities).
-	•	Burnable by authorized issuers.
-	•	Special “issuer” system for minting and burning tokens.
+- **Name:** Public Domain Token
+- **Symbol:** PDoT
+- **Token Standard:** ERC20 (with additional capabilities)
+- **Core Features:**
+  - Standard ERC20 transfers.
+  - ERC20Permit (gasless approvals).
+  - ERC20Votes (voting/polling capabilities).
+  - Burnable by authorized issuers.
+  - Special “issuer” system for minting and burning tokens.
 
 **Important:** The contract has additional controls and logic that differ from a typical ERC20:
 	1.	Min Supply: If total supply is 0, the first mint automatically brings supply up to a minimum threshold.
