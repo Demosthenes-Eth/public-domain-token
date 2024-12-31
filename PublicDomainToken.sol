@@ -118,10 +118,10 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         require(newIssuer != address(0), "Cannot transfer authorization to address(0)");
         require(newIssuer != address(this), "Cannot transfer authorization to contract address");
 
-        Issuer memory newIssuerData = Issuer(issuerData[msg.sender].index, issuerData[msg.sender].startingBlock, issuerData[msg.sender].expirationBlock, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
+        Issuer memory tempData = Issuer(issuerData[msg.sender].index, issuerData[msg.sender].startingBlock, issuerData[msg.sender].expirationBlock, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
         deauthorizeIssuerInternal(msg.sender);
-        authorizeIssuerInternal(newIssuer, newIssuerData);
-        emit IssuerAuthorizationTransferred(msg.sender, newIssuer, issuerData[newIssuer].index);
+        authorizeIssuerInternal(newIssuer, tempData);
+        emit IssuerAuthorizationTransferred(msg.sender, newIssuer, tempData.index);
     }
 
     /*Deauthorizes a single address as long as it's current an authorized issuer 
