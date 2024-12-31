@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 // Adjust the path if your PublicDomainToken is in a different location
-import "../src/PublicDomainToken.sol";
+import "../PublicDomainToken.sol";
 
 contract PublicDomainTokenTest is Test {
     // ------------------------------------------------------------------------
