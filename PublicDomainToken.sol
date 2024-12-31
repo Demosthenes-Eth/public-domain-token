@@ -115,8 +115,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         require(isIssuer[msg.sender] == 1, "Msg.sender is not an authorized issuer");
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
         require(block.number < issuerData[msg.sender].expirationBlock, "Issuer term has expired");
-        require(msg.sender != address(0), "Cannot transfer authorization to address(0)");
-        require(msg.sender != address(this), "Cannot transfer authorization to contract address");
+        require(newIssuer != address(0), "Cannot transfer authorization to address(0)");
+        require(newIssuer != address(this), "Cannot transfer authorization to contract address");
 
         issuerData[newIssuer] = Issuer(issuerData[msg.sender].index, block.number, block.number + issuerInterval, issuerData[msg.sender].totalMinted, issuerData[msg.sender].mintCount, issuerData[msg.sender].burnCount, issuerData[msg.sender].totalBurned);
         deauthorizeIssuerInternal(msg.sender);
