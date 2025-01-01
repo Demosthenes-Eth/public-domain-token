@@ -35,7 +35,7 @@ In an ideal world, anyone can use the token for anything, as long as they consid
 
 **2.1 Transferring Tokens**
 - Like any ERC20, you can send tokens from your address to another via the standard transfer and transferFrom methods.
-- transferFrom requires you to set an allowance first (or use EIP-2612 permit).
+- `transferFrom` requires you to set an allowance first (or use EIP-2612 permit).
 
 **2.2 Balances and Allowances**
 - Query balances using `balanceOf(address)`
@@ -49,8 +49,8 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 **3.1 Becoming an Issuer**
 - `authorizeIssuer(address newIssuer)`
   - Public function (anyone can call it) that authorizes newIssuer to become an issuer, provided:
-    - newIssuer is not already authorized.
-    - Total issuer count has not reached maxIssuers.
+    - `newIssuer` is not already authorized.
+    - Total issuer count has not reached `maxIssuers`.
   - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
 
 **3.2 Losing Issuer Status**
@@ -67,48 +67,48 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
   - Allows an existing (non-expired) issuer to transfer its issuer status to a new address.
   - The old issuer’s data (like total minted, burn counts, etc.) is copied to the new address, but the old issuer is deauthorized.
   - Transfer conditions:
-    - newIssuer must not already be an issuer.
-    - newIssuer can’t be address(0) or the token contract address.
+    - `newIssuer` must not already be an issuer.
+    - `newIssuer` can’t be `address(0)` or the token contract address.
     - The old issuer must still be unexpired.
 
 **3.4 Expiration Logic**
-- Each issuer has an `expirationBlock`. The default “term” for an issuer is issuerInterval blocks.
-- If the current block is beyond an issuer’s expirationBlock, that issuer is considered expired and cannot mint or burn.
+- Each issuer has an `expirationBlock`. The default “term” for an issuer is `issuerInterval` blocks.
+- If the current block is beyond an issuer’s `expirationBlock`, that issuer is considered expired and cannot mint or burn.
 - The owner can set `issuerInterval` (for testing or dynamic changes).
 
 ### 4. Minting Tokens
 
-- *`mint(address to, uint256 userRequestedAmount)`* (only callable by non-expired issuers)
-	1.	If `totalSupply()` == 0, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
-	2.	Otherwise, the contract checks that `userRequestedAmount` > 0 and does not exceed (currentSupply * mintFactor) / 100.
-	3.	If `currentSupply` < `minSupply`, a shortfall is automatically added to meet `minSupply`.
+- `mint(address to, uint256 userRequestedAmount)` (only callable by non-expired issuers)
+	1.	If `totalSupply() == 0`, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
+	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed (currentSupply * mintFactor) / 100.
+	3.	If `currentSupply < minSupply`, a shortfall is automatically added to meet `minSupply`.
 	4.	Finally, tokens are minted to `to`.
 
 **Key Points:**
 - Only an authorized, non-expired issuer can call mint.
 - If supply is zero, the minted amount is exactly minSupply.
-- Otherwise, the issuer can only mint up to a fraction (up to baseMintFactor%) of the current supply, with additional dynamic logic to adjust that factor.
+- Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor` %) of the current supply, with additional dynamic logic to adjust that factor.
 
 ### 5. Burning Tokens
 
 Issuers can burn tokens:
-	1.	*`burn(uint256 amount)`*
+	1.`burn(uint256 amount)`
     - Burns tokens from the issuer’s own balance.
-	2.	*`burnFrom(address account, uint256 amount)`*
+	2.`burnFrom(address account, uint256 amount)`
     - Burns tokens from account, provided the issuer has enough allowance from that account.
 
 Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 ### 6. Owner-Only Settings
 	
-1. *`setIssuerInterval(uint newInterval)`*
+1. `setIssuerInterval(uint newInterval)`
   - Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
-2. *`setBaseMintFactor(uint newMintFactor)`*
+2. `setBaseMintFactor(uint newMintFactor)`
   - Changes the base percentage limit (like 5%) for how much an issuer can mint relative to supply.
-3. *`setMinSupply(uint256 newMinSupply)`*
+3. `setMinSupply(uint256 newMinSupply)`
   - Changes the minimum supply enforced when the supply is zero.
 
-	**Note:** The contract comments suggest these setters are only for testing and ideally removed before production, or at least restricted to the owner only.
+	**Note:** These setters are only for testing and ideally removed before production, or at least restricted to the owner only.
 
 ### 7. ERC20 Permit and Votes
 
@@ -118,7 +118,7 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 ### 8. Frequently Asked Questions
 
 1. Who can call `authorizeIssuer`?
-  - Anyone can call it, but the contract reverts if the address is already authorized or if maxIssuers is reached.
+  - Anyone can call it, but the contract reverts if the address is already authorized or if `maxIssuers` is reached.
 2. Why does the contract force `minSupply` on first mint?
   - It ensures there’s a baseline liquidity of tokens whenever the supply is zero.
 3. What happens if an issuer’s term expires?
