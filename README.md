@@ -76,6 +76,25 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 - If the current block is beyond an issuer’s `expirationBlock`, that issuer is considered expired and cannot mint or burn.
 - The owner can set `issuerInterval` (for testing or dynamic changes).
 
+**3.5 Issuer Data Structure**
+
+`struct Issuer {
+    uint256 index;
+    uint256 startingBlock;
+    uint256 expirationBlock;
+    uint256 totalMinted;
+    uint256 mintCount;
+    uint256 burnCount;
+    uint256 totalBurned;
+}`
+
+Each issuer has:
+- An index in the issuers array.
+- `startingBlock`: The block at which they were initially authorized.
+- `expirationBlock`: The block after which they’re considered expired.
+- `totalMinted` / `totalBurned`: How many tokens they’ve minted/burned.
+- `mintCount` / `burnCount`: How many times they’ve minted/burned.
+
 ### 4. Minting Tokens
 
 - `mint(address to, uint256 userRequestedAmount)` (only callable by non-expired issuers)
