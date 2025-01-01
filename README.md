@@ -151,7 +151,16 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 5. Can users see who is an issuer?
   - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
 
-### 9. Summary
+### 9. Testing
+
+**Foundry**: This repository uses Foundry for testing.
+**Unit Tests**: See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
+
+### 10. License
+
+The `PublicDomainToken.sol` file is published under the MIT License (see the SPDX header). Please see the `LICENSE` file in this repo for more details.
+
+### 11. Summary
 
 - `Public Domain Token` (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 - Issuers can be added or removed, ensuring flexible but controlled supply management.
