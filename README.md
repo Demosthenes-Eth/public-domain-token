@@ -109,6 +109,7 @@ Each issuer has:
 - Only an authorized, non-expired issuer can call mint.
 - If supply is zero, the minted amount is exactly `minSupply`.
 - Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor` %) of the current supply, with additional dynamic logic to adjust that factor.  This logic is implemented by the internal helper function `calculateMintFactor()`.
+- Users can find the current mint factor of a specific issuer by calling the public getter function: `getIssuerMintFactor(address _issuerAddress)`.
 
 ### 5. Burning Tokens
 
