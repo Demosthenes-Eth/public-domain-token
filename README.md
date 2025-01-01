@@ -101,14 +101,14 @@ Each issuer has:
 
 - `mint(address to, uint256 userRequestedAmount)` (only callable by non-expired issuers)
 	1.	If `totalSupply() == 0`, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
-	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed (currentSupply * mintFactor) / 100.
+	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed `(currentSupply * mintFactor) / 100`.
 	3.	If `currentSupply < minSupply`, a shortfall is automatically added to meet `minSupply`.
 	4.	Finally, tokens are minted to `to`.
 
 **Key Points:**
 - Only an authorized, non-expired issuer can call mint.
-- If supply is zero, the minted amount is exactly minSupply.
-- Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor` %) of the current supply, with additional dynamic logic to adjust that factor.
+- If supply is zero, the minted amount is exactly `minSupply`.
+- Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor` %) of the current supply, with additional dynamic logic to adjust that factor.  This logic is implemented by the internal helper function `calculateMintFactor()`.
 
 ### 5. Burning Tokens
 
