@@ -164,7 +164,7 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
 6. How much can an issuer mint?
   - The amount that an issuer can mint in one call is capped at `baseMintFactor` as a percentage value of the current supply.  However, the mint function also calculates a personal mint factor for each issuer at the time of minting which limits how many tokens they can mint at that time.  This mint factor is determined by how much the issuer has previously minted vs how much they have burned.
 7. Will you deploy a liquidity pool on a DEX?
-  - No, I will not be deploying a liquidity pool for PDoT. Whether or not anyone decides to seed a pool for the token is entirely up to the token holders and issuers.
+  - No, I will not be deploying a liquidity pool for PDoT. Whether or not anyone decides to seed a pool for the token is entirely up to individual token holders and issuers.
 8. Will you deploy a governor contract for the token or DAO governed by the token?
   - No, I will not be deploying a governor contract on behalf of the token since the token parameters are intended to be ungovernable.  If someone wants to use PDoT as their DAO's governance token, that is their decision, and they can deploy their own governor contract to do so.
 
