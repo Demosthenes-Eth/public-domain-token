@@ -63,7 +63,7 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
   - Loops through all issuers and automatically removes any that are expired.
 
 **3.3 Transferring Issuer Authorization**
-- *`transferIssuerAuthorization(address newIssuer)`*
+- `transferIssuerAuthorization(address newIssuer)`
   - Allows an existing (non-expired) issuer to transfer its issuer status to a new address.
   - The old issuer’s data (like total minted, burn counts, etc.) is copied to the new address, but the old issuer is deauthorized.
   - Transfer conditions:
@@ -92,10 +92,11 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 ### 5. Burning Tokens
 
 Issuers can burn tokens:
-	1.`burn(uint256 amount)`
-    - Burns tokens from the issuer’s own balance.
-	2.`burnFrom(address account, uint256 amount)`
-    - Burns tokens from account, provided the issuer has enough allowance from that account.
+
+1.`burn(uint256 amount)`
+  - Burns tokens from the issuer’s own balance.
+2.`burnFrom(address account, uint256 amount)`
+  - Burns tokens from account, provided the issuer has enough allowance from that account.
 
 Both functions update the issuer’s `totalBurned` and `burnCount`.
 
