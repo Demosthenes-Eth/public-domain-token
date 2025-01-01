@@ -95,6 +95,7 @@ Issuers can burn tokens:
 
 1.`burn(uint256 amount)`
   - Burns tokens from the issuer’s own balance.
+
 2.`burnFrom(address account, uint256 amount)`
   - Burns tokens from account, provided the issuer has enough allowance from that account.
 
