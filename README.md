@@ -138,7 +138,16 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 - `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
 - `ERC20Votes` adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
 
-### 8. Frequently Asked Questions
+### 8. Testing
+
+**Foundry**: This repository uses Foundry for testing.
+**Unit Tests**: See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
+
+### 9. License
+
+The `PublicDomainToken.sol` file is published under the MIT License (see the SPDX header). Please see the `LICENSE` file in this repo for more details.
+
+### 10. Frequently Asked Questions
 
 1. Who can call `authorizeIssuer`?
   - Anyone can call it, but the contract reverts if the address is already authorized or if `maxIssuers` is reached.
@@ -150,15 +159,6 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
   - No, being the owner does not make you an issuer by default. The owner can adjust parameters but must explicitly authorize themselves if they want to mint/burn.
 5. Can users see who is an issuer?
   - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
-
-### 9. Testing
-
-**Foundry**: This repository uses Foundry for testing.
-**Unit Tests**: See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
-
-### 10. License
-
-The `PublicDomainToken.sol` file is published under the MIT License (see the SPDX header). Please see the `LICENSE` file in this repo for more details.
 
 ### 11. Summary
 
