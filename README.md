@@ -104,11 +104,11 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 ### 6. Owner-Only Settings
 	
 1. `setIssuerInterval(uint newInterval)`
-  - Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
+   - Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
 2. `setBaseMintFactor(uint newMintFactor)`
-  - Changes the base percentage limit (like 5%) for how much an issuer can mint relative to supply.
+   - Changes the base percentage limit (like 5%) for how much an issuer can mint relative to supply.
 3. `setMinSupply(uint256 newMinSupply)`
-  - Changes the minimum supply enforced when the supply is zero.
+   - Changes the minimum supply enforced when the supply is zero.
 
 	**Note:** These setters are only for testing and ideally removed before production, or at least restricted to the owner only.
 
