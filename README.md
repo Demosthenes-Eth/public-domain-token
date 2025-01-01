@@ -78,7 +78,8 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 
 **3.5 Issuer Data Structure**
 
-`struct Issuer {
+```
+struct Issuer {
     uint256 index;
     uint256 startingBlock;
     uint256 expirationBlock;
@@ -86,7 +87,8 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
     uint256 mintCount;
     uint256 burnCount;
     uint256 totalBurned;
-}`
+}
+```
 
 Each issuer has:
 - An index in the issuers array.
