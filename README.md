@@ -141,6 +141,7 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 ### 8. Testing
 
 **Foundry**: This repository uses Foundry for testing.
+
 **Unit Tests**: See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
 
 ### 9. License
@@ -159,6 +160,12 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
   - No, being the owner does not make you an issuer by default. The owner can adjust parameters but must explicitly authorize themselves if they want to mint/burn.
 5. Can users see who is an issuer?
   - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
+6. How much can an issuer mint?
+  - The amount that an issuer can mint in one call is capped at `baseMintFactor` as a percentage value of the current supply.  However, the mint function also calculates a personal mint factor for each issuer at the time of minting which limits how many tokens they can mint at that time.  This mint factor is determined by how much the issuer has previously minted vs how much they have burned.
+7. Will you deploy a liquidity pool on a DEX?
+  - No, I will not be deploying a liquidity pool for PDoT. Whether or not anyone decides to seed a pool for the token is entirely up to the token holders and issuers.
+8. Will you deploy a governor contract for the token or DAO governed by the token?
+  - No, I will not be deploying a governor contract on behalf of the token since the token parameters are intended to be ungovernable.  If someone wants to use PDoT as their DAO's governance token, that is their decision, and they can deploy their own governor contract to do so.
 
 ### 11. Summary
 
