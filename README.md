@@ -167,6 +167,8 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
   - No, I will not be deploying a liquidity pool for PDoT. Whether or not anyone decides to seed a pool for the token is entirely up to individual token holders and issuers.
 8. Will you deploy a governor contract for the token or DAO governed by the token?
   - No, I will not be deploying a governor contract on behalf of the token since the token parameters are intended to be ungovernable.  If someone wants to use PDoT as their DAO's governance token, that is their decision, and they can deploy their own governor contract to do so.
+9. What are the official communication channels for the token?
+  - There are no official communication channels for the token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent the token.  And if anyone claims to be actively developing the token itself (and not a derivative), they're almost certainly trying to scam you.
 
 ### 11. Summary
 
