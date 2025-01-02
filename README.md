@@ -1,16 +1,51 @@
-# public-domain-token
+# Public Domain Token
+
 ## Introduction
-`Public Domain Token` is an open ERC20 token with public permissioned minting.
 
-Usually when someone launches an ERC20 token, if the total capped supply is not minted during contract deployment, issuance will be generated via staking, mining, or direct manual minting through a governance contract.  In most cases, issuance is controlled by one party, even if that party abdicates their control after issuance has completed.  In these instances, the token is usually issued for a specific purpose, whether to facilitate governance over a specific DAO or on-chain product, to serve as a medium of exchange for a specific product, etc.  And in most cases, the token issuer is usually a stakeholder in whatever the token utility is intended to be.
+`Public Domain Token`, aka `PDoT`, is an ERC20 token with customized, non-standard minting logic designed to be permissionless, open, decentralized, and use-case agnostic.  Minting and burning is controlled by a class of addresses called Issuers, whose scope and term duration is determined by internal smart contract logic.  Any address can become an Issuer as long as the internal smart contract conditions are satisfied.  This is intended to make PDoT a flexible, shared cross-community asset that can serve different purposes for different stakeholders.
 
-I thought it would be an interesting experiment to deploy a token with a dynamic that I hope will contrast the typical token approach.  Instead of having a single issuer, this token has multiple potential issuers based on an authorized issuer list.  The issuer list is completely open and permissionless save for a hard cap to the number of authorized issuers at any given time.  So any address can authorize itself as an issuer as long as the cap has not been reached.
+## Motivation
 
-Issuers have the ability to mint tokens and burn tokens as long as their address is still authorized.  Authorization expires after roughly 1 year, assuming 12s per block.  Issuers have the ability to mint an arbitrary number of tokens and may mint an arbitrary number of times while their address is authorized.  However, the amount of tokens they can mint is limited by hardcoded minting logic based on a base factor relative to the total supply of the token.  This factor is then influenced by data that is specific to each issuer, namely how many tokens they have minted, how often they mint, how many tokens they have burned, and how often they burn - all over the duration of their current issuer authorization.  The more an issuer mints, the less tokens they will be able to mint in the future.  However, this can be offset by burning tokens.  It's up to issuers to decide what ratio of minting to burning best suits their purposes.
+Typical ERC20 token generation events distribute tokens to users via staking, mining, minting through governance, or pre-minting.
 
-After deployment, the ownership of the contract will be transferred to itself.  None of the contract parameters will be governable.  The operation of the contract will be entirely autonomous and deterministic based on the existing deployed code.  However, the token is built off of OpenZeppelin's contract libraries including `ERC20Burnable`, `ERC20Permit`, `Ownable`, and `ERC20Votes`.  Hopefully this gives the token a wide range of potential utility such that issuers can chose to use the token for a number of different purposes.
+In many, if not most cases, total supply of the token is capped in imitation of Bitcoin's original supply model.  Typically, issuance is controlled by one party, even if that party abdicates their control after the TGE.  
 
-In an ideal world, anyone can use the token for anything, as long as they consider the fact that they will not be the only authorized issuer at any given time.  This introduces some interesting new areas for experimentation and game theory.  Will issuers coordinate and collaborate to maintain the health of the token ecosystem and all of the various connected stakeholders?  Or will the issuer ecosystem quickly devolve into pure PvP?
+Tokens are usually issued for a specific purpose, such as:
+- DAO Governance
+- Product Parameter Management
+- Gaming Utility
+- Representatons of Debt or Other Onchain Obligations
+- Product-specific Medium of Exchange
+
+The token issuer is typically a stakeholder in whatever utility is intended for the token.
+
+The above covers a broad swathe of the existing ERC20 tokens in existence today, although it's certainly not exhaustive.
+
+In contrast, `Public Domain Token` is intended to invert some of the typical ERC20 norms in an attempt to experimentally examine how user behavior might change in response to differing incentive structures.
+
+It makes two major tradeoffs:
+
+1. Instead of one owner address with exclusive minting authority, the token implements an authorized issuer list that is completely open and permissionless save for a hard cap on the number of authorized issuers at any given time.  Any address can authorize itself as an issuer as long as the cap has not been reached.
+2. Instead of a capped token supply, issuers have the ability to mint and burn tokens an arbitrary number of times as long as their address is still authorized.  The amount of tokens they can mint is limited by hardcoded smart contract logic based on a base factor relative to the total supply of the token combined with the issuer's history interacting with the contract.
+
+Functionally, the 2nd tradeoff means that the more an issuer mints, the less tokens they will be able to mint in the future.  However, issuers can manage this with an offset earned by burning tokens.  
+
+It's up to individual issuers to decide what ratio of minting to burning best suits their purposes.
+
+After deployment, the ownership of the contract will be transferred to itself, intentionally bricking any of the ownerOnly setter functions.  
+
+None of the contract parameters will be governable.  The operation of the contract will be entirely autonomous and deterministic based on the existing deployed code.  Once ownership has been transferred to the contract itself, the contract will require no maintenance or further involvement from the original developer.
+
+However, the token is built off of OpenZeppelin's contract libraries including `ERC20Burnable`, `ERC20Permit`, `Ownable`, and `ERC20Votes`.  This is intended to give the token a wide range of potential utility such that issuers can choose to use the token for a number of different purposes.
+
+Public Domain Token is an experimental, open token.  Any party can use the token for any purpose, as long as they consider the fact that they will not be the only authorized issuer at any given time.  
+
+From a tokenomics perspective, this introduces interesting new areas for experimentation, game theory, and observation:
+
+- Will issuers coordinate and collaborate to maintain the health of the token ecosystem and all of the various connected stakeholders?  Will the issuer ecosystem devolve into pure PvP?
+- Will the token supply inflate beyond control?  Will issuers successfully regulate token supply through burning?
+- Is DAO governance feasible in the absence of a closed token system?
+- Is game utility feasible in the absence of founder-controlled issuance?
 
 ## Documentation
 
@@ -62,19 +97,19 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 - `deauthorizeAllExpiredIssuers()`
   - Loops through all issuers and automatically removes any that are expired.
 
-**3.3 Transferring Issuer Authorization**
+**3.3 Expiration Logic**
+- Each issuer has an `expirationBlock`. The default “term” for an issuer is `issuerInterval` blocks.
+- If the current block is beyond an issuer’s `expirationBlock`, that issuer is considered expired and cannot mint or burn.
+- The owner can set `issuerInterval` (for testing or dynamic changes).
+
+**3.4 Transferring Issuer Authorization**
 - `transferIssuerAuthorization(address newIssuer)`
   - Allows an existing (non-expired) issuer to transfer its issuer status to a new address.
   - The old issuer’s data (like total minted, burn counts, etc.) is copied to the new address, but the old issuer is deauthorized.
   - Transfer conditions:
+    - `msg.sender` must be an existing issuer whose term has not expired.
     - `newIssuer` must not already be an issuer.
     - `newIssuer` can’t be `address(0)` or the token contract address.
-    - The old issuer must still be unexpired.
-
-**3.4 Expiration Logic**
-- Each issuer has an `expirationBlock`. The default “term” for an issuer is `issuerInterval` blocks.
-- If the current block is beyond an issuer’s `expirationBlock`, that issuer is considered expired and cannot mint or burn.
-- The owner can set `issuerInterval` (for testing or dynamic changes).
 
 **3.5 Issuer Data Structure**
 
