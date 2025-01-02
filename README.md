@@ -184,20 +184,28 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
 
 **1. Who can call `authorizeIssuer`?**
   - Anyone can call it, but the contract reverts if the address is already authorized or if `maxIssuers` is reached.
+
 **2. Why does the contract force `minSupply` on first mint?**
   - It ensures there’s a baseline liquidity of tokens whenever the supply is zero.
+
 **3. What happens if an issuer’s term expires?**
   - The issuer can no longer call mint or burn. They can be deauthorized by anyone calling `deauthorizeIssuer(issuer)` or automatically by `deauthorizeAllExpiredIssuers()`.
+
 **4. Does the contract owner automatically become an issuer?**
   - No, being the owner does not make you an issuer by default. The owner can adjust parameters but must explicitly authorize themselves if they want to mint/burn.
+
 **5. Can users see who is an issuer?**
   - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
+
 **6. How much can an issuer mint?**
   - The amount that an issuer can mint in one call is capped at `baseMintFactor` as a percentage value of the current supply.  However, the mint function also calculates a personal mint factor for each issuer at the time of minting which limits how many tokens they can mint at that time.  This mint factor is determined by how much the issuer has previously minted vs how much they have burned.
+
 **7. Will you deploy DEX liquidity for Public Domain Token?**
   - I will not be deploying a liquidity pool. Whether or not anyone decides to seed a pool for the token is entirely up to individual token holders and issuers.
+
 **8. Will you deploy a governor contract for Public Domain Token?**
   - No, the token parameters are intended to be ungovernable.  If someone wants to use Public Domain Token as their governance token, that is their decision, and they can deploy their own governor contract to do so.
+  
 **9. Does Public Domain Token have an official Discord or Telegram channel?**
   - There are no official social media channels for Public Domain Token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent Public Domain Token.  And if anyone claims to be actively developing Public Domain Token itself (and not a derivative), they're almost certainly trying to scam you.
 
