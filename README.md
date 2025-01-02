@@ -167,8 +167,6 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 3. `setMinSupply(uint256 newMinSupply)`
    - Changes the minimum supply enforced when the supply is zero.
 
-	**Note:** These setters are only for testing and ideally removed before production, or at least restricted to the owner only.
-
 ### 7. ERC20 Permit and Votes
 
 - `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
@@ -176,9 +174,7 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 ### 8. Testing
 
-**Foundry**: This repository uses Foundry for testing.
-
-**Unit Tests**: See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
+Tested using Foundry.  See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
 
 ### 9. License
 
