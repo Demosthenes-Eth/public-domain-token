@@ -194,18 +194,17 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
   - Yes, the contract exposes an array of all issuers, plus you can query `isIssuer(address)`.
 6. How much can an issuer mint?
   - The amount that an issuer can mint in one call is capped at `baseMintFactor` as a percentage value of the current supply.  However, the mint function also calculates a personal mint factor for each issuer at the time of minting which limits how many tokens they can mint at that time.  This mint factor is determined by how much the issuer has previously minted vs how much they have burned.
-7. Will you deploy a liquidity pool on a DEX?
-  - No, I will not be deploying a liquidity pool for PDoT. Whether or not anyone decides to seed a pool for the token is entirely up to individual token holders and issuers.
-8. Will you deploy a governor contract for the token or DAO governed by the token?
-  - No, I will not be deploying a governor contract on behalf of the token since the token parameters are intended to be ungovernable.  If someone wants to use PDoT as their DAO's governance token, that is their decision, and they can deploy their own governor contract to do so.
-9. What are the official communication channels for the token?
-  - There are no official communication channels for the token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent the token.  And if anyone claims to be actively developing the token itself (and not a derivative), they're almost certainly trying to scam you.
+7. Will you deploy DEX liquidity for Public Domain Token?
+  - I will not be deploying a liquidity pool. Whether or not anyone decides to seed a pool for the token is entirely up to individual token holders and issuers.
+8. Will you deploy a governor contract for Public Domain Token?
+  - No, the token parameters are intended to be ungovernable.  If someone wants to use Public Domain Token as their governance token, that is their decision, and they can deploy their own governor contract to do so.
+9. Does Public Domain Token have an official Discord or Telegram channel?
+  - There are no official social media channels for Public Domain Token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent Public Domain Token.  And if anyone claims to be actively developing Public Domain Token itself (and not a derivative), they're almost certainly trying to scam you.
 
 ### 11. Summary
 
 - `Public Domain Token` (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 - Issuers can be added or removed, ensuring flexible but controlled supply management.
-- Owner can fine-tune issuer intervals, minimum supply, and base mint factors.
 - Users enjoy standard ERC20 features, plus gasless approvals (Permit) and voting capabilities (Votes).
 
 ### Additional Resources
