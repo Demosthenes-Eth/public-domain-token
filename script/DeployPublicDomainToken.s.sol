@@ -20,7 +20,7 @@ contract DeployPublicDomainToken is Script {
         PublicDomainToken token = new PublicDomainToken();
 
         // Optionally, log the deployed contract address
-        emit log_named_address("PublicDomainToken deployed to:", address(token));
+        //emit log_named_address("PublicDomainToken deployed to:", address(token));
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
