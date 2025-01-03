@@ -83,8 +83,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         _;
     }
 
-    /*Setter function to change the issuer term for testing purposes. Should be deleted prior to deployment.
-    Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
+    /*Contract ownership will be transferred to the contract address after deployment
+    which will intentionally brick these setter functions.*/
     function setIssuerInterval(uint newInterval) public onlyOwner {
         emit IssuerIntervalUpdated(issuerInterval, newInterval);
         issuerInterval = newInterval;
