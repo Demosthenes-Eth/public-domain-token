@@ -14,7 +14,7 @@ contract DeployPublicDomainToken is Script {
 
         console.log("Account", account);
         // Start broadcasting transactions using the specified profile (Sepolia)
-        vm.startBroadcast();
+        vm.startBroadcast(privateKey);
 
         // Deploy the PublicDomainToken contract without passing an initial owner
         PublicDomainToken token = new PublicDomainToken();
