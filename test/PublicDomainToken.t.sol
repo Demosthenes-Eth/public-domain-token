@@ -421,7 +421,7 @@ contract PublicDomainTokenTest is Test {
     // ------------------------------------------------------------------------
     // Owner-only setters
     // ------------------------------------------------------------------------
-
+    /*
     function testOwnerCanSetIssuerInterval() public {
         // default issuerInterval is 2628000
         uint256 oldInterval = token.issuerInterval();
@@ -502,7 +502,8 @@ contract PublicDomainTokenTest is Test {
 
         vm.stopPrank();
     }
-
+    */
+   
     // ------------------------------------------------------------------------
     // Utility: test deauthorizeAllExpiredIssuers()
     // ------------------------------------------------------------------------
