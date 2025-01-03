@@ -523,4 +523,22 @@ contract PublicDomainTokenTest is Test {
         assertEq(token.isIssuer(issuer1), 0, "Issuer1 should be removed");
         assertEq(token.isIssuer(issuer2), 0, "Issuer2 should be removed");
     }
+
+    // ------------------------------------------------------------------------
+    // Test transfers to contract address
+    // ------------------------------------------------------------------------
+    
+    function testTransferToContractAddressReverts() public {
+        token.authorizeIssuer(issuer1);
+        vm.startPrank(issuer1);
+        token.mint(issuer1, 1000);
+        vm.expectRevert(bytes("Cannot transfer to contract address"));
+        token.transfer(address(token), 100);
+
+        // Confirm that issuer1's balance is unchanged and
+        // the contract address did not receive tokens.
+        assertEq(token.balanceOf(issuer1), 1_000_000, "Issuer1 balance should remain 1,000,000");
+        assertEq(token.balanceOf(address(token)), 0, "Contract address should have 0 tokens");
+        vm.stopPrank();
+    }
 }
