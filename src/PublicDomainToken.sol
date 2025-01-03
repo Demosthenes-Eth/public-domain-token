@@ -308,18 +308,11 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
 
     //The following functions are overrides required by Solidity.
 
-    function _transfer(address from, address to, uint256 amount) 
-        internal 
-        override(ERC20, ERC20Votes) 
-    {
-        require(to != address(this), "Cannot transfer to contract address");
-        super._transfer(from, to, amount);
-    }
-
     function _update(address from, address to, uint256 value)
         internal
         override(ERC20, ERC20Votes)
     {
+        require(to != address(this), "Cannot transfer to contract address");
         super._update(from, to, value);
     }
 
