@@ -47,7 +47,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
 
     uint256 public totalIssuers;
 
-    //Max percentage of total supply that can be minted per transaction. Arbitrarily set to 5%.
+    //Max percentage of total supply that can be minted per transaction.
     uint256 public baseMintFactor = 5;
 
     //Min token supply
