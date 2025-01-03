@@ -167,20 +167,24 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 3. `setMinSupply(uint256 newMinSupply)`
    - Changes the minimum supply enforced when the supply is zero.
 
-### 7. ERC20 Permit and Votes
+### 7. Interface
+
+The smart contract implements the interface `IPublicDomainToken` which itself inherits the functionality of `IERC20`, `IERC20Permits`, and `IVotes`.  This makes `IPublicDomainToken` a one-stop-shop for most of the token's broad functionality.
+
+### 8. ERC20 Permit and Votes
 
 - `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
 - `ERC20Votes` adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
 
-### 8. Testing
+### 9. Testing
 
 Tested using Foundry.  See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
 
-### 9. License
+### 10. License
 
 The `PublicDomainToken.sol` file is published under the MIT License (see the SPDX header). Please see the `LICENSE` file in this repo for more details.
 
-### 10. Frequently Asked Questions
+### 11. Frequently Asked Questions
 
 **1. Who can call `authorizeIssuer`?**
   - Anyone can call it, but the contract reverts if the address is already authorized or if `maxIssuers` is reached.
@@ -205,11 +209,11 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
 
 **8. Will you deploy a governor contract for Public Domain Token?**
   - No, the token parameters are intended to be ungovernable.  If someone wants to use Public Domain Token as their governance token, that is their decision, and they can deploy their own governor contract to do so.
-  
+
 **9. Does Public Domain Token have an official Discord or Telegram channel?**
   - There are no official social media channels for Public Domain Token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent Public Domain Token.  And if anyone claims to be actively developing Public Domain Token itself (and not a derivative), they're almost certainly trying to scam you.
 
-### 11. Summary
+### 12. Summary
 
 - `Public Domain Token` (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 - Issuers can be added or removed, ensuring flexible but controlled supply management.
