@@ -324,7 +324,10 @@ contract PublicDomainTokenTest is Test {
         token.mint(user1, 1000);
     }
 
-    function testMintShortfallIfSupplyBelowMinSupply() public {
+    /*Successfully tested testMintShortFallIfSupplyBelowMinSupply() previously
+    and disabling now due to fact that it relies on ownership of the contract
+    to change minSupply since contract ownership no longer applies.*/
+    /* function testMintShortfallIfSupplyBelowMinSupply() public {
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
@@ -373,7 +376,7 @@ contract PublicDomainTokenTest is Test {
             2_001_000,
             "Total supply should be 2,001,000"
         );
-    }
+    } */
 
     // ------------------------------------------------------------------------
     // Burn tests
