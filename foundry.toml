@@ -3,3 +3,7 @@ remappings = [
   "forge-std=lib/forge-std/src",
   "@openzeppelin=lib/openzeppelin-contracts"
 ]
+
+[profile.sepolia]
+rpc_url = "$SEPOLIA_RPC_URL"
+private_key = "$SEPOLIA_PRIVATE_KEY"
