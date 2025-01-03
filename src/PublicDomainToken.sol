@@ -23,7 +23,7 @@ interface IPublicDomainToken is IERC20, IERC20Permit, IVotes {
     function getIssuers() external view returns (address[] memory);
 }
 
-contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20Votes, IPublicDomainToken {
+contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20Votes {
     constructor(address initialOwner)
         ERC20("Public Domain Token", "PDoT")
         Ownable(initialOwner)
