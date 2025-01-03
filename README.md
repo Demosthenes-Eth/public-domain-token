@@ -158,35 +158,42 @@ Issuers can burn tokens:
 
 Both functions update the issuer’s `totalBurned` and `burnCount`.
 
-### 6. Owner-Only Settings
-	
-1. `setIssuerInterval(uint newInterval)`
-   - Updates the block-based “term” for new issuers. (For instance, 2,628,000 blocks ~ 1 year at 12s/block.)
-2. `setBaseMintFactor(uint newMintFactor)`
-   - Changes the base percentage limit (like 5%) for how much an issuer can mint relative to supply.
-3. `setMinSupply(uint256 newMinSupply)`
-   - Changes the minimum supply enforced when the supply is zero.
+### 6. Constants
 
-### 7. Interface
+The contract utilizes five constants:
+- `scalingFactor` = 1e18
+  - Scaling factor used internally for increased accuracy during division.
+- `maxIssuers` = 1000
+  - Hard-coded cap on the total number of authorized issuers allowed at any time.
+- `issuerInterval` = 2628000
+  - The standard issuer authorization period expressed in blocks.  Assumes 12s per block for a term period of roughly one year.
+- `baseMintFactor` = 5
+  - Hard-coded cap on the amount of tokens an issuer can mint in one function call, expressed as a percentage of the current total supply.  `baseMintFactor` is adjusted based on the issuer's mint and burn history to determine the issuer's actual mint factor.
+- `minSupply` = 1000000
+  - Hard-coded supply floor.  If the current total supply ever dips below `minSupply`, the next issuer to mint will automatically mint enough tokens to bring the total supply back to the floor.
+
+  **Note:** In the edge case that the current total supply is 0, such as immediately after contract deployment, the first issuer to mint will automatically mint the full value of `minSupply`, which prevents the contract from bricking due to conflicting logic checks.
+
+### 6. Interface
 
 The smart contract implements the interface `IPublicDomainToken` which itself inherits the functionality of `IERC20`, `IERC20Permit`, and `IVotes`.  This makes `IPublicDomainToken` a one-stop-shop for most of the token's broad functionality.
 
 **Note:** `burn()` and `burnFrom()` are exposed by `IERC20` and inherited by `IPublicDomainToken`.
 
-### 8. ERC20 Permit and Votes
+### 7. ERC20 Permit and Votes
 
 - `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
 - `ERC20Votes` adds voting/polling capabilities typically used in governance systems. Each token holder can delegate votes or vote with their tokens.
 
-### 9. Testing
+### 8. Testing
 
 Tested using Foundry.  See `PublicDomainToken.t.sol` for coverage of issuer flows, minting, burning, and event emission checks.
 
-### 10. License
+### 9. License
 
 The `PublicDomainToken.sol` file is published under the MIT License (see the SPDX header). Please see the `LICENSE` file in this repo for more details.
 
-### 11. Frequently Asked Questions
+### 10. Frequently Asked Questions
 
 **1. Who can call `authorizeIssuer`?**
   - Anyone can call it, but the contract reverts if the address is already authorized or if `maxIssuers` is reached.
@@ -215,7 +222,7 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
 **9. Does Public Domain Token have an official Discord or Telegram channel?**
   - There are no official social media channels for Public Domain Token.  This includes Discord, X, Farcaster, and Telegram.  Individuals are free to create their own communities around the token as they wish, but be wary of anyone claiming to officially represent Public Domain Token.  And if anyone claims to be actively developing Public Domain Token itself (and not a derivative), they're almost certainly trying to scam you.
 
-### 12. Summary
+### 11. Summary
 
 - `Public Domain Token` (PDoT) is an ERC20 token with custom issuance mechanics managed by authorized issuers who have time-limited mint/burn privileges.
 - Issuers can be added or removed, ensuring flexible but controlled supply management.
