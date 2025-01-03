@@ -16,14 +16,11 @@ interface IPublicDomainToken is IERC20, IERC20Permit, IVotes {
     function deauthorizeIssuer(address existingIssuer) external;
     function deauthorizeAllExpiredIssuers() external;
     function mint(address to, uint256 userRequestedAmount) external;
-    function burn(uint256 amount) external;
-    function burnFrom(address account, uint256 amount) external;
-    function calculateMintFactor(address _issuerAddress) external view returns (uint256);
     function getIssuerMintFactor(address _issuerAddress) external view returns (uint256);
     function getIssuers() external view returns (address[] memory);
 }
 
-contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20Votes {
+contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20Votes, IPublicDomainToken {
     constructor(address initialOwner)
         ERC20("Public Domain Token", "PDoT")
         Ownable(initialOwner)
@@ -319,7 +316,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     function nonces(address owner)
         public
         view
-        override(ERC20Permit, Nonces)
+        override(ERC20Permit, IERC20Permit, Nonces)
         returns (uint256)
     {
         return super.nonces(owner);
