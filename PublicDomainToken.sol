@@ -6,8 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+import "@openzeppelin/contracts/governance/utils/IVotes.sol";
 
-interface IPublicDomainToken {
+interface IPublicDomainToken is IERC20, IERC20Permit, IVotes {
     function authorizeIssuer(address newIssuer) external;
     function transferIssuerAuthorization(address newIssuer) external;
     function deauthorizeIssuer(address existingIssuer) external;
