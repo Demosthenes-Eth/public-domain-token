@@ -169,7 +169,7 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 ### 7. Interface
 
-The smart contract implements the interface `IPublicDomainToken` which itself inherits the functionality of `IERC20`, `IERC20Permits`, and `IVotes`.  This makes `IPublicDomainToken` a one-stop-shop for most of the token's broad functionality.
+The smart contract implements the interface `IPublicDomainToken` which itself inherits the functionality of `IERC20`, `IERC20Permit`, and `IVotes`.  This makes `IPublicDomainToken` a one-stop-shop for most of the token's broad functionality.
 
 ### 8. ERC20 Permit and Votes
 
