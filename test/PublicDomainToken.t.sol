@@ -25,22 +25,12 @@ contract PublicDomainTokenTest is Test {
 
     function setUp() public {
         // Deploy the contract with `owner` as the initialOwner
-        vm.prank(owner);
         token = new PublicDomainToken();
     }
 
     // ------------------------------------------------------------------------
     // Basic constructor tests
     // ------------------------------------------------------------------------
-
-    /*
-    function testConstructorSetsOwner() public {
-        // The `Ownable` part is inherited from an OZ contract that has 
-        // been modified to accept an initialOwner in the constructor.
-        // We expect the owner to be `address(100)`.
-        assertEq(token.owner(), owner, "Owner not set correctly in constructor");
-    }
-    */
 
     function testTokenNameAndSymbol() public {
         // Name should be "Public Domain Token", symbol should be "PDoT"
@@ -419,92 +409,6 @@ contract PublicDomainTokenTest is Test {
         token.burn(100);
         vm.stopPrank();
     }
-
-    // ------------------------------------------------------------------------
-    // Owner-only setters
-    // ------------------------------------------------------------------------
-    /*
-    function testOwnerCanSetIssuerInterval() public {
-        // default issuerInterval is 2628000
-        uint256 oldInterval = token.issuerInterval();
-        uint256 newInterval = 1000000;
-
-        vm.prank(owner);
-        token.setIssuerInterval(newInterval);
-
-        assertEq(token.issuerInterval(), newInterval, "Issuer interval not updated");
-        assertTrue(token.issuerInterval() != oldInterval, "Issuer interval should change");
-        vm.stopPrank();
-
-        // Try calling as issuer1
-        vm.startPrank(issuer1);
-
-        vm.expectRevert(
-        abi.encodeWithSelector(
-            Ownable.OwnableUnauthorizedAccount.selector,
-            issuer1
-        )
-        );
-        token.setIssuerInterval(newInterval);
-
-        vm.stopPrank();
-    }
-
-    function testNonOwnerCannotSetIssuerInterval() public {
-        // Try calling as issuer1
-        vm.startPrank(issuer1);
-
-        vm.expectRevert(
-        abi.encodeWithSelector(
-            Ownable.OwnableUnauthorizedAccount.selector,
-            issuer1
-        )
-        );
-        token.setIssuerInterval(123456);
-
-        vm.stopPrank();
-    }
-
-    function testOwnerCanSetBaseMintFactor() public {
-        vm.prank(owner);
-        token.setBaseMintFactor(10);
-        assertEq(token.baseMintFactor(), 10, "baseMintFactor not updated");
-        vm.stopPrank();
-
-        // Try calling as issuer1
-        vm.startPrank(issuer1);
-
-        vm.expectRevert(
-        abi.encodeWithSelector(
-            Ownable.OwnableUnauthorizedAccount.selector,
-            issuer1
-        )
-        );
-        token.setBaseMintFactor(10);
-
-        vm.stopPrank();
-    }
-
-    function testOwnerCanSetMinSupply() public {
-        vm.prank(owner);
-        token.setMinSupply(2_000_000);
-        assertEq(token.minSupply(), 2_000_000, "minSupply not updated");
-        vm.stopPrank();
-
-        // Try calling as issuer1
-        vm.startPrank(issuer1);
-
-        vm.expectRevert(
-        abi.encodeWithSelector(
-            Ownable.OwnableUnauthorizedAccount.selector,
-            issuer1
-        )
-        );
-        token.setMinSupply(1000000);
-
-        vm.stopPrank();
-    }
-    */
 
     // ------------------------------------------------------------------------
     // Utility: test deauthorizeAllExpiredIssuers()
