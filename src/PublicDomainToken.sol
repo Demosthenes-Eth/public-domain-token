@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -20,10 +19,9 @@ interface IPublicDomainToken is IERC20, IERC20Permit, IVotes {
     function getIssuers() external view returns (address[] memory);
 }
 
-contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20Votes, IPublicDomainToken {
+contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPublicDomainToken {
     constructor(address initialOwner)
         ERC20("Public Domain Token", "PDoT")
-        Ownable(initialOwner)
         ERC20Permit("Public Domain Token")
     {}
 
@@ -40,18 +38,18 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
     uint256 constant scalingFactor = 1e18;
     
     //Cap on authorized issuers.
-    uint256 public maxIssuers = 1000;
+    uint256 public constant maxIssuers = 1000;
 
     //Issuer interval is roughly 1 year assuming 12s per block.
-    uint256 public issuerInterval = 2628000;
+    uint256 public constant issuerInterval = 2628000;
 
     uint256 public totalIssuers;
 
     //Max percentage of total supply that can be minted per transaction.
-    uint256 public baseMintFactor = 5;
+    uint256 public constant baseMintFactor = 5;
 
     //Min token supply
-    uint256 public minSupply = 1000000;
+    uint256 public constant minSupply = 1000000;
 
     //Array of authorized issuer addresses
     address[] public issuers;
@@ -72,36 +70,12 @@ contract PublicDomainToken is ERC20, ERC20Burnable, Ownable, ERC20Permit, ERC20V
         uint256 totalMintedSoFar,
         uint256 totalBurnedSoFar
     );
-    event IssuerIntervalUpdated(uint256 oldInterval, uint256 newInterval);
-    event BaseMintFactorUpdated(uint256 oldMintFactor, uint256 newMintFactor);
-    event MinSupplyUpdated(uint256 oldMinSupply, uint256 newMinSupply);
 
     //Checks if the address of the function caller is currently a non-expired, authorized issuer.
     modifier onlyIssuer (){
         require(isIssuer[msg.sender] == 1, "Unauthorized Issuer");
         require(block.number < issuerData[msg.sender].expirationBlock, "Expired Issuer");
         _;
-    }
-
-    /*Contract ownership will be transferred to the contract address after deployment
-    which will intentionally brick these setter functions.*/
-    function setIssuerInterval(uint newInterval) public onlyOwner {
-        emit IssuerIntervalUpdated(issuerInterval, newInterval);
-        issuerInterval = newInterval;
-    }
-
-    /*Setter function to change the base mint factor for testing purposes.  Should be deleted prior to
-    deployment. Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
-    function setBaseMintFactor(uint newMintFactor) public onlyOwner {
-        emit BaseMintFactorUpdated(baseMintFactor, newMintFactor);
-        baseMintFactor = newMintFactor;
-    }
-
-    /*Setter function to change the minimum supply for testing purposes.  Should be deleted prior to
-    deployment. Added onlyOwner modifier as a safety measure in case it accidentally gets deployed.*/
-    function setMinSupply(uint256 newMinSupply) public onlyOwner {
-        emit MinSupplyUpdated(minSupply, newMinSupply);
-        minSupply = newMinSupply;
     }
 
     /*Authorizes an address as an issuer if the address is not already authorized
