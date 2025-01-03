@@ -171,6 +171,8 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 The smart contract implements the interface `IPublicDomainToken` which itself inherits the functionality of `IERC20`, `IERC20Permit`, and `IVotes`.  This makes `IPublicDomainToken` a one-stop-shop for most of the token's broad functionality.
 
+**Note:** `burn()` and `burnFrom()` are exposed by `IERC20` and inherited by `IPublicDomainToken`.
+
 ### 8. ERC20 Permit and Votes
 
 - `ERC20Permit` allows gasless approvals using EIP-2612. Users can sign a permit message off-chain, and another account can submit the signed message on-chain to set allowances without spending ETH for the approval transaction.
