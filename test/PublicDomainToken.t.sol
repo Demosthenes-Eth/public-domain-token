@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "../lib/forge-std/src/Test.sol";
 // Adjust the path if your PublicDomainToken is in a different location
-import "../PublicDomainToken.sol";
+import "../src/PublicDomainToken.sol";
 
 contract PublicDomainTokenTest is Test {
     // ------------------------------------------------------------------------
