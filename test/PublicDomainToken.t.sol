@@ -32,7 +32,7 @@ contract PublicDomainTokenTest is Test {
     // Basic constructor tests
     // ------------------------------------------------------------------------
 
-    function testTokenNameAndSymbol() public {
+    function testTokenNameAndSymbol() public view {
         // Name should be "Public Domain Token", symbol should be "PDoT"
         assertEq(token.name(), "Public Domain Token");
         assertEq(token.symbol(), "PDoT");
