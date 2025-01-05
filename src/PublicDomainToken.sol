@@ -49,8 +49,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     //Max percentage of total supply that can be minted per transaction.
     uint256 public constant baseMintFactor = 5;
 
-    //Min token supply
-    uint256 public constant minSupply = 1000000;
+    //Min token supply (multiplied by scalingFactor due to 18 decimal points)
+    uint256 public constant minSupply = 1000000 * scalingFactor;
 
     //Array of authorized issuer addresses
     address[] public issuers;
