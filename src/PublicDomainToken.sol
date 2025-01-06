@@ -267,21 +267,19 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         return issuers;
     }
 
+    //Returns an array of expired issuers to make it easier for users to track
     function getExpiredIssuers() public view returns (address[] memory){
         uint256 expiredCount = 0;
     
-        // First Pass: Count expired issuers
         for (uint256 i = 0; i < issuers.length; i++) {
             if (block.number >= issuerData[issuers[i]].expirationBlock) {
                 expiredCount++;
             }
         }
         
-        // Initialize memory array with the exact count
         address[] memory expiredIssuers = new address[](expiredCount);
         uint256 currentIndex = 0;
         
-        // Second Pass: Populate the array with expired issuers
         for (uint256 i = 0; i < issuers.length; i++) {
             if (block.number >= issuerData[issuers[i]].expirationBlock) {
                 expiredIssuers[currentIndex] = issuers[i];
