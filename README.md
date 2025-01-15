@@ -176,7 +176,7 @@ The contract utilizes five constants:
   - The standard issuer authorization period expressed in blocks.  Assumes 12s per block for a term period of roughly one year.
 - `baseMintFactor` = 5
   - Hard-coded cap on the amount of tokens an issuer can mint in one function call, expressed as a percentage of the current total supply.  `baseMintFactor` is adjusted based on the issuer's mint and burn history to determine the issuer's actual mint factor.
-- `minSupply` = 1000000
+- `minSupply` = 1000000 * 10**18
   - Hard-coded supply floor.  If the current total supply ever dips below `minSupply`, the next issuer to mint will automatically mint enough tokens to bring the total supply back to the floor.
 
   **Note:** In the edge case that the current total supply is 0, such as immediately after contract deployment, the first issuer to mint will automatically mint the full value of `minSupply`, which prevents the contract from bricking due to conflicting logic checks.
