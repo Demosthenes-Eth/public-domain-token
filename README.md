@@ -88,6 +88,7 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
     - `newIssuer` is not already authorized.
     - Total issuer count has not reached `maxIssuers`.
   - Once authorized, the new issuer appears in the issuers array and has special privileges (mint/burn).
+  - This function is modified by `cooldown` which checks that the address submitted doesn't have an active cooldown.
 
 **3.2 Losing Issuer Status**
 - `deauthorizeIssuer(address existingIssuer)`
@@ -95,6 +96,7 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
     1. The issuer’s authorization has expired or
 	  2. The issuer itself calls this function (self-deauthorization).
   - Once deauthorized, the address is removed from the issuers array and loses mint/burn rights.
+  - This function contains logic pertaining to the `cooldown` modifier.  If an issuer self-deauthorizes prior to serving 95% of the `issuerInterval` since they were last authorized, their cooldown will be set to the block number + the remaining number of blocks until their original expiration value.  This is to prevent issuers from abusing self-deauthorization to attempt to circumvent the contract's minting logic.
 - `deauthorizeAllExpiredIssuers()`
   - Loops through all issuers and automatically removes any that are expired.
 
@@ -107,6 +109,7 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 - `transferIssuerAuthorization(address newIssuer)`
   - Allows an existing (non-expired) issuer to transfer its issuer status to a new address.
   - The old issuer’s data (like total minted, burn counts, etc.) is copied to the new address, but the old issuer is deauthorized.
+  - This function is modified by `cooldown` which checks that the address submitted doesn't have an active cooldown.
   - Transfer conditions:
     - `msg.sender` must be an existing issuer whose term has not expired.
     - `newIssuer` must not already be an issuer.
