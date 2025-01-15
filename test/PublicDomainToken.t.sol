@@ -68,7 +68,7 @@ contract PublicDomainTokenTest is Test {
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
         // Roll the block number forward 500 blocks
-        uint256 issuer1Expiration = issuerData(issuer1).expirationBlock;
+        (, , uint256 issuer1Expiration, , , , ) = token.issuerData(issuer1);
         vm.roll(500);
         // Self-deauthorize as issuer1
         vm.prank(issuer1);
