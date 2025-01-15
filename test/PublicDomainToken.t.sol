@@ -288,6 +288,18 @@ contract PublicDomainTokenTest is Test {
         vm.stopPrank();
     }
 
+    function testTransferFailsIfNewIssuerHasCoolDown() public {
+        token.authorizeIssuer(issuer1);
+        vm.roll(500);
+        vm.prank(issuer1);
+        token.transferIssuerAuthorization(issuer2);
+        vm.stopPrank();
+        vm.startPrank(issuer2);
+        vm.expectRevert(bytes("Cooldown period has not expired"));
+        token.transferIssuerAuthorization(issuer1);
+        vm.stopPrank();
+    }
+
     function testTransferEmitsEvent() public {
         // We can check the event logs for IssuerAuthorizationTransferred
         token.authorizeIssuer(issuer1);

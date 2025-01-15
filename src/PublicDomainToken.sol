@@ -137,6 +137,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     //Internal helper function to deauthorize a single address
     function deauthorizeIssuerInternal(address existingIssuer) private {
+        if (block.number < (issuerData[existingIssuer].startingBlock + 2496600)){
+            cooldownExpirationBlock[existingIssuer] = issuerData[existingIssuer].expirationBlock;
+        }
         delete isIssuer[existingIssuer];
         delete issuerData[existingIssuer];
     }
