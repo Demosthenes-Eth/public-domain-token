@@ -68,7 +68,8 @@ contract PublicDomainTokenTest is Test {
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
         // Roll the block number forward 500 blocks
-        vm.roll(block.number + 500);
+        uint256 issuer1Expiration = issuerData(issuer1).expirationBlock;
+        vm.roll(500);
         // Self-deauthorize as issuer1
         vm.prank(issuer1);
         token.deauthorizeIssuer(issuer1);
@@ -77,7 +78,7 @@ contract PublicDomainTokenTest is Test {
         // Should revert because the cooldown period for issuer1 has not expired
         vm.expectRevert(bytes("Cooldown period has not expired"));
         uint256 issuer1CoolDown = token.cooldownExpirationBlock(issuer1);
-        assertEq(issuer1CoolDown, block.number + (token.issuerInterval() - 501), "Cooldown should be set to 2,627,499 blocks from now");
+        assertEq(issuer1CoolDown, issuer1Expiration), "Cooldown should be set issuer1's original expiration block";);
         vm.stopPrank();
     }
 
