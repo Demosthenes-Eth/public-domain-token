@@ -53,7 +53,7 @@ From a tokenomics perspective, this introduces interesting new areas for experim
 - **Name:** Public Domain Token
 - **Symbol:** PDoT
 - **Decimals:** 18
-- **Sepolia Ethereum Testnet Address:** 0xbe5613869FeCb905436bA33533ae4c66e4e59a40
+- **Sepolia Ethereum Testnet Address:** 0x961AaeBf4902A35f5200320DE91c5d81DADC1a6E
 - **Token Standard:** ERC20 (with additional capabilities)
 - **Core Features:**
   - Standard ERC20 transfers.
@@ -141,7 +141,7 @@ Each issuer has:
 
 - `mint(address to, uint256 userRequestedAmount)` (only callable by non-expired issuers)
 	1.	If `totalSupply() == 0`, the contract forces the minted amount to minSupply, ignoring userRequestedAmount.
-	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed `(currentSupply * mintFactor) / 100`.
+	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed `currentSupply * mintFactor / 10000`.
 	3.	If `currentSupply < minSupply`, a shortfall is automatically added to meet `minSupply`.
 	4.	Finally, tokens are minted to `to`.
 
@@ -150,7 +150,7 @@ Each issuer has:
 **Key Points:**
 - Only an authorized, non-expired issuer can call mint.
 - If supply is zero, the minted amount is exactly `minSupply`.
-- Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor` %) of the current supply, with additional dynamic logic to adjust that factor.  This logic is implemented by the internal helper function `calculateMintFactor()`.
+- Otherwise, the issuer can only mint up to a fraction (up to `baseMintFactor / 10**4`) of the current supply, with additional dynamic logic to adjust that factor.  This logic is implemented by the internal helper function `calculateMintFactor()`.
 - Users can find the current mint factor of a specific issuer by calling the public getter function: `getIssuerMintFactor(address _issuerAddress)`.
 
 ### 5. Burning Tokens
@@ -174,8 +174,8 @@ The contract utilizes five constants:
   - Hard-coded cap on the total number of authorized issuers allowed at any time.
 - `issuerInterval` = 2628000
   - The standard issuer authorization period expressed in blocks.  Assumes 12s per block for a term period of roughly one year.
-- `baseMintFactor` = 5
-  - Hard-coded cap on the amount of tokens an issuer can mint in one function call, expressed as a percentage of the current total supply.  `baseMintFactor` is adjusted based on the issuer's mint and burn history to determine the issuer's actual mint factor.
+- `baseMintFactor` = 500
+  - Hard-coded cap on the amount of tokens an issuer can mint in one function call, expressed as a percentage of the current total supply with 10**4 scaling applied for accuracy.  `baseMintFactor` is adjusted based on the issuer's mint and burn history to determine the issuer's actual mint factor.
 - `minSupply` = 1000000 * 10**18
   - Hard-coded supply floor.  If the current total supply ever dips below `minSupply`, the next issuer to mint will automatically mint enough tokens to bring the total supply back to the floor.
 
