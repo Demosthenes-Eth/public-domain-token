@@ -129,7 +129,7 @@ struct Issuer {
 ```
 
 Each issuer has:
-- An index in the issuers array.
+- `index`: An index in the issuers array.
 - `startingBlock`: The block at which they were initially authorized.
 - `expirationBlock`: The block after which they’re considered expired.
 - `totalMinted` / `totalBurned`: How many tokens they’ve minted/burned.
