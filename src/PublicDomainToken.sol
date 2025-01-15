@@ -17,6 +17,7 @@ interface IPublicDomainToken is IERC20, IERC20Permit, IVotes {
     function deauthorizeAllExpiredIssuers() external;
     function mint(address to, uint256 userRequestedAmount) external;
     function getIssuerMintFactor(address _issuerAddress) external view returns (uint256);
+    function getIssuerMaxMintable(address _issuerAddress) external view returns (uint256);
     function getIssuers() external view returns (address[] memory);
     function getExpiredIssuers() external view returns (address[] memory);
 }
@@ -276,6 +277,12 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     function getIssuerMintFactor(address _issuerAddress) public view returns (uint256){
         return calculateMintFactor(_issuerAddress);
+    }
+
+    function getIssuerMaxMintable(address _issuerAddress) public view returns (uint256){
+        uint256 mintFactor = calculateMintFactor(_issuerAddress);
+        uint256 currentSupply = totalSupply();
+        return (currentSupply * mintFactor) / 10000;
     }
 
     //Returns the entire array of issuers so users can easily see 
