@@ -64,6 +64,22 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
     }
 
+    function testCannotAuthorizeIssuerWithCooldown() public {
+        // Authorize issuer1
+        token.authorizeIssuer(issuer1):
+        // Roll the block number forward 500 blocks
+        vm.roll(block.number + 500);
+        // Self-deauthorize as issuer1
+        vm.prank(issuer1);
+        token.deauthorizeIssuer(issuer1);
+        // Attempt to reauthorize issuer1 right away
+        token.authorizeIssuer(issuer1);
+        // Should revert because the cooldown period for issuer1 has not expired
+        vm.expectRevert(bytes("Cooldown period has not expired"));
+        assertEq(token.cooldown[issuer1], block.number + (token.issuerInterval - 501), "Cooldown should be set to 2,627,499 blocks from now");
+        vm.stopPrank();
+    }
+
     function testDeauthorizeIssuerAfterExpiration() public {
         // Authorize an issuer
         token.authorizeIssuer(issuer1);
