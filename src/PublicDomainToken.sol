@@ -37,13 +37,11 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         uint256 totalBurned;
     }
     
-    //Cap on authorized issuers.
+    //Cap on authorized issuers
     uint256 public constant maxIssuers = 1000;
 
-    //Issuer interval is roughly 1 year assuming 12s per block.
+    //Issuer interval is roughly 1 year assuming 12s per block
     uint256 public constant issuerInterval = 2628000;
-
-    uint256 public totalIssuers;
 
     //Max percentage of total supply that can be minted per transaction, 
     //scaled by 10**4 for more accuracy
@@ -51,6 +49,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     //Min token supply (multiplied by 10**18 due to 18 decimal places)
     uint256 public constant minSupply = 1000000 * 10**18;
+
+    //Tracks the total number of currently authorized issuers
+    uint256 public totalIssuers;
 
     //Array of authorized issuer addresses
     address[] public issuers;
