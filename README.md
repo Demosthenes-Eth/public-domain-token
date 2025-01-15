@@ -66,7 +66,6 @@ From a tokenomics perspective, this introduces interesting new areas for experim
 
 1. **Min Supply:** If total supply is 0, the first mint automatically brings supply up to a minimum threshold.
 2. **Issuers:** Certain authorized addresses can mint/burn under constraints.
-3. **Owner:** The contract has a single owner who can adjust certain parameters (like intervals, min supply, etc.).
 
 ### 2. Basic ERC20 Functionality
 
@@ -104,7 +103,6 @@ Issuers are special addresses authorized to mint new tokens (up to certain limit
 **3.3 Expiration Logic**
 - Each issuer has an `expirationBlock`. The default “term” for an issuer is `issuerInterval` blocks.
 - If the current block is beyond an issuer’s `expirationBlock`, that issuer is considered expired and cannot mint or burn.
-- The owner can set `issuerInterval` (for testing or dynamic changes).
 
 **3.4 Transferring Issuer Authorization**
 - `transferIssuerAuthorization(address newIssuer)`
