@@ -52,6 +52,7 @@ From a tokenomics perspective, this introduces interesting new areas for experim
 ### 1. Overview
 - **Name:** Public Domain Token
 - **Symbol:** PDoT
+- **Decimals:** 18
 - **Sepolia Ethereum Testnet Address:** 0xbB69f8EBe1dd47169dbc7F1715eA147C4714986c
 - **Token Standard:** ERC20 (with additional capabilities)
 - **Core Features:**
@@ -143,6 +144,8 @@ Each issuer has:
 	2.	Otherwise, the contract checks that `userRequestedAmount > 0` and does not exceed `(currentSupply * mintFactor) / 100`.
 	3.	If `currentSupply < minSupply`, a shortfall is automatically added to meet `minSupply`.
 	4.	Finally, tokens are minted to `to`.
+
+**Important Note:**  Because token balances are calculated to 18 decimal places, you must pad the amount of tokens you intend to mint with 18 zeroes.  For example, to mint 500 PDoT, you would enter `500000000000000000000` (ie 500 * 10**18) as the `userRequestedAmount` parameter when calling the function.  The same is also true for transferring and burning tokens.
 
 **Key Points:**
 - Only an authorized, non-expired issuer can call mint.
