@@ -82,7 +82,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     //Checks if the address has an active coolldown period
     modifier cooldown (address _address){
-        require(cooldownExpirationBlock[_address] > block.number, "Cooldown period has not expired");
+        require(cooldownExpirationBlock[_address] > block.number || 0, "Cooldown period has not expired");
         _;
     }
 
