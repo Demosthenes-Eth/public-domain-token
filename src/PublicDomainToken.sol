@@ -60,7 +60,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     //Maps addresses to the Issuer struct which stores their issuer data.
     mapping (address => Issuer) public issuerData;
 
-    mapping (address => uint256) public cooldown;
+    mapping (address => uint256) public cooldownExpirationBlock;
 
     event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
     event IssuerDeauthorized(address indexed issuer, address indexed deauthorizer);
@@ -82,7 +82,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     //Checks if the address has an active coolldown period
     modifier cooldown (address _address){
-        require(cooldown[_address] < block.number, "Cooldown period has not expired");
+        require(cooldownExpirationBlock[_address] < block.number, "Cooldown period has not expired");
         _;
     }
 
@@ -126,7 +126,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         //If the issuer address self-deauthorizes before completing 95% of their term, 
         //the address must wait until the end of the term to reauthorize
         if (issuerData[existingIssuer].startingBlock + 2496600 < block.number){
-            cooldown[existingIssuer] = block.number + (issuerInterval - (block.number - issuerData[existingIssuer].startingBlock));
+            cooldownExpirationBlock[existingIssuer] = block.number + (issuerInterval - (block.number - issuerData[existingIssuer].startingBlock));
         }
         delete isIssuer[existingIssuer];
         totalIssuers--;
