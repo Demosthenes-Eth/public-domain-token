@@ -53,7 +53,7 @@ From a tokenomics perspective, this introduces interesting new areas for experim
 - **Name:** Public Domain Token
 - **Symbol:** PDoT
 - **Decimals:** 18
-- **Sepolia Ethereum Testnet Address:** 0xbB69f8EBe1dd47169dbc7F1715eA147C4714986c
+- **Sepolia Ethereum Testnet Address:** 0xbe5613869FeCb905436bA33533ae4c66e4e59a40
 - **Token Standard:** ERC20 (with additional capabilities)
 - **Core Features:**
   - Standard ERC20 transfers.
