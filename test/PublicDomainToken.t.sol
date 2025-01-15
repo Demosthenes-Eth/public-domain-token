@@ -135,7 +135,7 @@ contract PublicDomainTokenTest is Test {
     function testTransferIssuerAuthorizationCopiesStats() public {   
         token.authorizeIssuer(issuer1);
         vm.prank(issuer1);
-        token.mint(issuer1, 1000); 
+        token.mint(issuer1, 1_000_000_000_000_000_000_000); 
         
         // Grab issuer1's data before transferring authorization
         (
@@ -152,7 +152,7 @@ contract PublicDomainTokenTest is Test {
         // totalMinted should be exactly 1,000,000
         assertEq(
             iTotalMinted,
-            1_000_000,
+            1_000_000_000_000_000_000_000_000,
             "issuer1's totalMinted should reflect only the shortfall"
         );
         assertEq(
@@ -299,21 +299,21 @@ contract PublicDomainTokenTest is Test {
         // currentSupply == 0
         // Because your new logic says: if supply == 0, disregard userRequestedAmount
         // and mint exactly `minSupply` (1,000,000).
-        token.mint(user1, 1000);
+        token.mint(user1, 1_000_000_000_000_000_000_000);
 
         vm.stopPrank();
 
         // We now expect user1 to have 1,000,000 tokens (not 1,001,000).
         assertEq(
             token.balanceOf(user1),
-            1_000_000,
+            1_000_000_000_000_000_000_000_000,
             "User1 should have 1,000,000 tokens"
         );
 
         // Total supply is also 1,000,000
         assertEq(
             token.totalSupply(),
-            1_000_000,
+            1_000_000_000_000_000_000_000_000,
             "Total supply should be 1,000,000"
         );
     }
@@ -321,7 +321,7 @@ contract PublicDomainTokenTest is Test {
     function testCannotMintIfNotIssuer() public {
         // Non-issuer tries to mint
         vm.expectRevert(bytes("Unauthorized Issuer"));
-        token.mint(user1, 1000);
+        token.mint(user1, 1_000_000_000_000_000_000_000);
     }
 
     /*Successfully tested testMintShortFallIfSupplyBelowMinSupply() previously
@@ -347,7 +347,7 @@ contract PublicDomainTokenTest is Test {
         //    so totalSupply(1,000,000) < new minSupply(2,000,000)
         // ----------------------------------------------------------------------
         vm.prank(owner);
-        token.setMinSupply(2_000_000);
+        token.setMinSupply(2_000_000_);
 
         // ----------------------------------------------------------------------
         // 3) Mint again from a non-zero supply
@@ -389,18 +389,18 @@ contract PublicDomainTokenTest is Test {
         vm.startPrank(issuer1);
 
         // currentSupply == 0 => mint = minSupply(1,000,000), ignoring userRequested(2,000).
-        token.mint(issuer1, 2_000);
+        token.mint(issuer1, 2_000_000_000_000_000_000_000);
 
         // issuer1 now has 1,000,000
         // Burn 1,000 => final = 999,000
-        token.burn(1_000);
+        token.burn(1_000_000_000_000_000_000_000);
 
         vm.stopPrank();
 
         // issuer1's final balance is 999,000
         assertEq(
             token.balanceOf(issuer1),
-            999_000,
+            999_000_000_000_000_000_000_000,
             "issuer1 should have 999,000 after burning 1,000"
         );
     }
@@ -409,7 +409,7 @@ contract PublicDomainTokenTest is Test {
         // user1 tries to burn
         vm.startPrank(user1);
         vm.expectRevert("Unauthorized Issuer");
-        token.burn(100);
+        token.burn(100_000_000_000_000_000_000);
         vm.stopPrank();
     }
 
@@ -441,13 +441,13 @@ contract PublicDomainTokenTest is Test {
     function testTransferToContractAddressReverts() public {
         token.authorizeIssuer(issuer1);
         vm.startPrank(issuer1);
-        token.mint(issuer1, 1000);
+        token.mint(issuer1, 1_000_000_000_000_000_000_000);
         vm.expectRevert(bytes("Cannot transfer to contract address"));
-        token.transfer(address(token), 100);
+        token.transfer(address(token), 100_000_000_000_000_000_000);
 
         // Confirm that issuer1's balance is unchanged and
         // the contract address did not receive tokens.
-        assertEq(token.balanceOf(issuer1), 1_000_000, "Issuer1 balance should remain 1,000,000");
+        assertEq(token.balanceOf(issuer1), 1_000_000_000_000_000_000_000_000, "Issuer1 balance should remain 1,000,000");
         assertEq(token.balanceOf(address(token)), 0, "Contract address should have 0 tokens");
         vm.stopPrank();
     }
