@@ -45,8 +45,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
     uint256 public totalIssuers;
 
-    //Max percentage of total supply that can be minted per transaction.
-    uint256 public constant baseMintFactor = 5;
+    //Max percentage of total supply that can be minted per transaction, 
+    //scaled by 10**4 for more accuracy
+    uint256 public constant baseMintFactor = 500;
 
     //Min token supply (multiplied by 10**18 due to 18 decimal places)
     uint256 public constant minSupply = 1000000 * 10**18;
@@ -185,7 +186,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         } else {
             //Amount of tokens requested can't exceed the allowable number of tokens that can be minted 
             //based on the minter's mint factor
-            require(userRequestedAmount * 100 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
+            require(userRequestedAmount * 10000 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
         }
 
         uint256 totalMintAmount = userRequestedAmount + shortfall;
@@ -233,8 +234,9 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         //Average number of tokens burned per burn
         uint256 AvgBurn = (burnCount == 0) ? 0 : totalBurned / burnCount;
 
-        //Average percentage of current total supply minted per mint
-        uint256 AvgPercentMint = (AvgMint * 100) / currentSupply;
+        //Average percentage of current total supply minted per mint,
+        //scaled by 10**4 for more accuracy
+        uint256 AvgPercentMint = (AvgMint * 10000) / currentSupply;
         
         uint256 mintAdjustedBase;
 
@@ -250,17 +252,17 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
         //If address has burned more tokens in aggregate than it has minted
         if (totalMinted <= totalBurned){
-            burnOffset+=1;
+            burnOffset+=100;
             }
         //If the average number of tokens burned per burn is higher than the
         //average number of tokens minted per mint
         if (AvgMint <= AvgBurn){
-            burnOffset+=1;
+            burnOffset+=100;
         }
         //If the average number of tokens minted per mint 
         //is less than 2% of the current supply
-        if (AvgPercentMint <= 2){
-            burnOffset+=1;
+        if (AvgPercentMint <= 200){
+            burnOffset+=100;
         }
 
         uint256 finalBase = mintAdjustedBase + burnOffset;
