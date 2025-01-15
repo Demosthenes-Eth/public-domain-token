@@ -78,7 +78,7 @@ contract PublicDomainTokenTest is Test {
         // Should revert because the cooldown period for issuer1 has not expired
         vm.expectRevert(bytes("Cooldown period has not expired"));
         uint256 issuer1CoolDown = token.cooldownExpirationBlock(issuer1);
-        assertEq(issuer1CoolDown, issuer1Expiration, "Cooldown should be set issuer1's original expiration block";);
+        assertEq(issuer1CoolDown, issuer1Expiration, "Cooldown should be set issuer1's original expiration block");
         vm.stopPrank();
     }
 
