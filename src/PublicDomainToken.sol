@@ -158,6 +158,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         }
     }
 
+    //Note: userRequestedAmount should be padded with 18 zeros to account for 18 decimal places
     function mint(address to, uint256 userRequestedAmount) public onlyIssuer {
         require(to != address(0), "ERC20: mint to the zero address");
         require(to != address(this), "Cannot mint tokens to the contract address");
@@ -194,7 +195,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         emit IssuerActivity(msg.sender, totalMintAmount, 0, issuerData[msg.sender].totalMinted, issuerData[msg.sender].totalBurned);
     }
 
-    //Added logic to update burn data for issuer
+    //Note: amount should be padded with 18 zeros to account for 18 decimal places
     function burn(uint256 amount) public override onlyIssuer {
         _burn(msg.sender, amount);
         issuerData[msg.sender].totalBurned +=amount;
@@ -202,7 +203,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         emit IssuerActivity(msg.sender, 0, amount, issuerData[msg.sender].totalMinted, issuerData[msg.sender].totalBurned);
     }
 
-    //Added logic to update burn data for issuer
+    //Note: amount should be padded with 18 zeros to account for 18 decimal places
     function burnFrom(address account, uint256 amount) public override onlyIssuer {
         _spendAllowance(account, msg.sender, amount);
         _burn(account, amount);
