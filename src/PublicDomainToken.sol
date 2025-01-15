@@ -125,8 +125,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         require (msg.sender == existingIssuer || block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
         //If the issuer address self-deauthorizes before completing 95% of their term, 
         //the address must wait until the end of the term to reauthorize
-        if (issuerData[existingIssuer].startingBlock + 2496600 < block.number){
-            cooldownExpirationBlock[existingIssuer] = block.number + (issuerInterval - (block.number - issuerData[existingIssuer].startingBlock));
+        if ((issuerData[existingIssuer].startingBlock + 2496600) < block.number){
+            cooldownExpirationBlock[existingIssuer] = issuerData[existingIssuer].expirationBlock;
         }
         delete isIssuer[existingIssuer];
         totalIssuers--;
