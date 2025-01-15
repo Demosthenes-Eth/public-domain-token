@@ -75,10 +75,12 @@ contract PublicDomainTokenTest is Test {
         vm.prank(issuer1);
         // Self-deauthorize issuer1
         token.deauthorizeIssuer(issuer1);
+        vm.stopPrank();
+        vm.prank(issuer1);
         // Attempt to reauthorize issuer1 right away
-        token.authorizeIssuer(issuer1);
         // Should revert because the cooldown period for issuer1 has not expired
         vm.expectRevert(bytes("Cooldown period has not expired"));
+        token.authorizeIssuer(issuer1);
         uint256 issuer1CoolDown = token.cooldownExpirationBlock(issuer1);
         assertEq(issuer1CoolDown, issuer1Expiration, "Cooldown should be set issuer1's original expiration block");
         vm.stopPrank();
