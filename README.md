@@ -36,7 +36,7 @@ After deployment, the ownership of the contract will be transferred to itself, i
 
 None of the contract parameters will be governable.  The operation of the contract will be entirely autonomous and deterministic based on the existing deployed code.  Once ownership has been transferred to the contract itself, the contract will require no maintenance or further involvement from the original developer.
 
-However, the token is built off of OpenZeppelin's contract libraries including `ERC20Burnable`, `ERC20Permit`, `Ownable`, and `ERC20Votes`.  This is intended to give the token a wide range of potential utility such that issuers can choose to use the token for a number of different purposes.
+However, the token is built off of OpenZeppelin's contract libraries including `ERC20Burnable`, `ERC20Permit`, and `ERC20Votes`.  This is intended to give the token a wide range of potential utility such that issuers can choose to use the token for a number of different purposes.
 
 Public Domain Token is an experimental, open token.  Any party can use the token for any purpose, as long as they consider the fact that they will not be the only authorized issuer at any given time.  
 
