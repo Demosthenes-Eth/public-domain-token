@@ -76,7 +76,8 @@ contract PublicDomainTokenTest is Test {
         token.authorizeIssuer(issuer1);
         // Should revert because the cooldown period for issuer1 has not expired
         vm.expectRevert(bytes("Cooldown period has not expired"));
-        assertEq(token.cooldownExpirationBlock[issuer1], block.number + (token.issuerInterval - 501), "Cooldown should be set to 2,627,499 blocks from now");
+        uint256 issuer1CoolDown = token.cooldownExpirationBlock[issuer1];
+        assertEq(issuer1CoolDown, block.number + (token.issuerInterval - 501), "Cooldown should be set to 2,627,499 blocks from now");
         vm.stopPrank();
     }
 
