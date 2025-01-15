@@ -165,9 +165,7 @@ Both functions update the issuer’s `totalBurned` and `burnCount`.
 
 ### 6. Constants
 
-The contract utilizes five constants:
-- `scalingFactor` = 1e18
-  - Scaling factor used internally for increased accuracy during division.
+The contract utilizes four constants:
 - `maxIssuers` = 1000
   - Hard-coded cap on the total number of authorized issuers allowed at any time.
 - `issuerInterval` = 2628000
