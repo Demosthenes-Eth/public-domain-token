@@ -65,13 +65,13 @@ contract PublicDomainTokenTest is Test {
     }
 
     function testCannotAuthorizeIssuerWithCooldown() public {
+        vm.prank(issuer1);
         // Authorize issuer1
         token.authorizeIssuer(issuer1);
         // Roll the block number forward 500 blocks
         (, , uint256 issuer1Expiration, , , , ) = token.issuerData(issuer1);
         vm.roll(500);
-        // Self-deauthorize as issuer1
-        vm.prank(issuer1);
+        // Self-deauthorize issuer1
         token.deauthorizeIssuer(issuer1);
         // Attempt to reauthorize issuer1 right away
         token.authorizeIssuer(issuer1);
