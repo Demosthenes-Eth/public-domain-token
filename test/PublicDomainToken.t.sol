@@ -66,7 +66,7 @@ contract PublicDomainTokenTest is Test {
 
     function testCannotAuthorizeIssuerWithCooldown() public {
         // Authorize issuer1
-        token.authorizeIssuer(issuer1):
+        token.authorizeIssuer(issuer1);
         // Roll the block number forward 500 blocks
         vm.roll(block.number + 500);
         // Self-deauthorize as issuer1
