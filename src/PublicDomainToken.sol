@@ -62,6 +62,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     //Maps addresses to the Issuer struct which stores their issuer data.
     mapping (address => Issuer) public issuerData;
 
+    mapping (address => uint256) public cooldown;
+
     event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
     event IssuerDeauthorized(address indexed issuer, address indexed deauthorizer);
     event IssuerAuthorizationTransferred(address indexed oldIssuer, address indexed newIssuer, uint256 issuerIndex);
@@ -80,9 +82,15 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         _;
     }
 
+    //Checks if the address has an active coolldown period
+    modifier cooldown (address _address){
+        require(cooldown[_address] < block.number, "Cooldown period has not expired");
+        _;
+    }
+
     /*Authorizes an address as an issuer if the address is not already authorized
     and the total number of issuers is less than the issuer cap*/
-    function authorizeIssuer(address newIssuer) public {
+    function authorizeIssuer(address newIssuer) public cooldown(newIssuer) {
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
         require(totalIssuers < maxIssuers, "Maximum number of Issuers reached");
         totalIssuers++;
@@ -99,7 +107,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         isIssuer[newIssuer] = 1;
     }
 
-    function transferIssuerAuthorization(address newIssuer) public onlyIssuer {
+    function transferIssuerAuthorization(address newIssuer) public onlyIssuer cooldown(newIssuer){
         require(isIssuer[msg.sender] == 1, "Msg.sender is not an authorized issuer");
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
         require(block.number < issuerData[msg.sender].expirationBlock, "Issuer term has expired");
@@ -117,6 +125,11 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     function deauthorizeIssuer(address existingIssuer) public {
         require (isIssuer[existingIssuer] == 1, "Address is not an authorized issuer");
         require (msg.sender == existingIssuer || block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
+        //If the issuer address self-deauthorizes before completing 95% of their term, 
+        //the address must wait until the end of the term to reauthorize
+        if (issuerData[existingIssuer].startingBlock + 2496600 < block.number){
+            cooldown[existingIssuer] = block.number + (issuerInterval - (block.number - issuerData[existingIssuer].startingBlock));
+        }
         delete isIssuer[existingIssuer];
         totalIssuers--;
         removeIssuerFromArray(existingIssuer);
