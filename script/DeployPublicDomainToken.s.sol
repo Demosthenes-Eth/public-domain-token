@@ -13,16 +13,13 @@ contract DeployPublicDomainToken is Script {
         address account = vm.addr(privateKey);
 
         console.log("Account", account);
-        // Start broadcasting transactions using the specified profile (Sepolia)
+
         vm.startBroadcast(privateKey);
 
-        // Deploy the PublicDomainToken contract without passing an initial owner
+
         PublicDomainToken token = new PublicDomainToken();
 
-        // Optionally, log the deployed contract address
-        //emit log_named_address("PublicDomainToken deployed to:", address(token));
 
-        // Stop broadcasting transactions
         vm.stopBroadcast();
     }
 }
