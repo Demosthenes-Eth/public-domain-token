@@ -235,7 +235,6 @@ The `PublicDomainToken.sol` file is published under the MIT License (see the SPD
 
 ### Additional Resources
 
-- **Functions:** You can explore the contract code directly or consult developer docs for `ERC20`, `ERC20Permit`, and `ERC20Votes`.
-- **Security:** Always ensure you understand the roles and privileges of owners/issuers before engaging with the token.
+- **OpenZeppelin Functions:** You can explore the contract code directly or consult developer docs (https://docs.openzeppelin.com/) for `ERC20`, `ERC20Permit`, and `ERC20Votes`.
 
 Use this document as a quick reference to understand how the token supply mechanics and issuer system work.
