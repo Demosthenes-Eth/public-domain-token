@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.28+commit.7893614a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"details": "This library provides helpers for manipulating time-related objects. It uses the following types: - `uint48` for timepoints - `uint32` for durations While the library doesn't provide specific types for timepoints and duration, it does provide: - a `Delay` type to represent duration that can be programmed to change value automatically at a given point - additional helper functions",
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/PublicDomainToken_flattened.sol": "Time"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"src/PublicDomainToken_flattened.sol": {
+			"keccak256": "0x1a6ce57f9c84f8b8ed12c29b67f0153dd4747575a0ad67c218273d7d3035296c",
+			"urls": [
+				"bzz-raw://6bdf3c5442a85f10f52c0f442dddc0ecf53958969da18a6b79fe24a1f8e2fb8d",
+				"dweb:/ipfs/QmfXvCEDL38M1YiZB62A5fMZJRZY8RVEXQimxKe2xsVuxx"
+			]
+		}
+	},
+	"version": 1
+}
