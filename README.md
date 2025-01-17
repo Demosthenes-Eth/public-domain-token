@@ -53,6 +53,7 @@ From a tokenomics perspective, this introduces interesting new areas for experim
 - **Name:** Public Domain Token
 - **Symbol:** PDoT
 - **Decimals:** 18
+- **Etherscan Link:** https://etherscan.io/address/0xfabe8869539b6815ad9d60b2103f8ae0ae3fd286
 - **Mainnet Ethereum Address:** 0xFABe8869539b6815ad9D60b2103f8Ae0aE3FD286
 - **Sepolia Ethereum Testnet Address:** 0xFABe8869539b6815ad9D60b2103f8Ae0aE3FD286
 - **Token Standard:** ERC20 (with additional capabilities)
