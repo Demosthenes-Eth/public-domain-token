@@ -27,6 +27,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         ERC20Permit("Public Domain Token")
     {}
 
+    //Data structure stores individual issuer data.
+    //Exposed by the issuerData mapping.
     struct Issuer {
         uint256 index;
         uint256 startingBlock;
@@ -44,10 +46,10 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     uint256 public constant issuerInterval = 2628000;
 
     //Max percentage of total supply that can be minted per transaction, 
-    //scaled by 10**4 for more accuracy
+    //scaled by 10**4 for greater accuracy
     uint256 public constant baseMintFactor = 500;
 
-    //Min token supply (multiplied by 10**18 due to 18 decimal places)
+    //Min token supply (multiplied by 10**18 for 18 decimal places)
     uint256 public constant minSupply = 1000000 * 10**18;
 
     //Tracks the total number of currently authorized issuers
@@ -62,6 +64,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     //Maps addresses to the Issuer struct which stores their issuer data.
     mapping (address => Issuer) public issuerData;
 
+    //Maps addresses to the block number at which their cooldown period expires
+    //Uninitiated values of 0 indicate no cooldown period is active
     mapping (address => uint256) public cooldownExpirationBlock;
 
     event IssuerAuthorized(address indexed issuer, uint256 expirationBlock);
@@ -88,8 +92,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         _;
     }
 
-    /*Authorizes an address as an issuer if the address is not already authorized
-    and the total number of issuers is less than the issuer cap*/
+    //Authorizes an address as an issuer if the address is not already authorized
+    //and the total number of issuers is less than the issuer cap
     function authorizeIssuer(address newIssuer) public cooldown(newIssuer) {
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
         require(totalIssuers < maxIssuers, "Maximum number of Issuers reached");
@@ -107,6 +111,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         isIssuer[newIssuer] = 1;
     }
 
+    //Transfers issuer authorization from one address to another
     function transferIssuerAuthorization(address newIssuer) public onlyIssuer cooldown(newIssuer){
         require(isIssuer[msg.sender] == 1, "Msg.sender is not an authorized issuer");
         require(isIssuer[newIssuer] == 0, "Address is already authorized");
@@ -120,8 +125,8 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         emit IssuerAuthorizationTransferred(msg.sender, newIssuer, tempData.index);
     }
 
-    /*Deauthorizes a single address as long as it's current an authorized issuer 
-    and its experiation has passed*/
+    //Deauthorizes a single address as long as it's currently an authorized issuer 
+    //and its expiration has passed
     function deauthorizeIssuer(address existingIssuer) public {
         require (isIssuer[existingIssuer] == 1, "Address is not an authorized issuer");
         require (msg.sender == existingIssuer || block.number >= issuerData[existingIssuer].expirationBlock, "Issuer term has not expired");
@@ -185,11 +190,12 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
             //Force user to mint the minimum supply amount if total supply is 0
             userRequestedAmount = 0;
         } else {
-            //Amount of tokens requested can't exceed the allowable number of tokens that can be minted 
-            //based on the minter's mint factor
+            //Amount of tokens requested can't exceed the allowable 
+            //number of tokens that can be minted based on the minter's mint factor
             require(userRequestedAmount * 10000 <= currentSupply * mintFactor, "Minted amount exceeds allowable mint");
         }
 
+        //Adds any shortfall to the total mint amount
         uint256 totalMintAmount = userRequestedAmount + shortfall;
         
         _mint(to,totalMintAmount);
@@ -215,8 +221,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
     }
 
     //Determines max amount of tokens that can be issued in the transaction
-    //as a percentage of the current supply
-
+    //as a percentage of the current supply, scaled by 10**4 for greater accuracy
     function calculateMintFactor(address _issuerAddress) view internal returns (uint256){
         uint256 totalMinted = issuerData[_issuerAddress].totalMinted;
         uint256 mintCount = issuerData[_issuerAddress].mintCount;
@@ -268,6 +273,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
 
         uint256 finalBase = mintAdjustedBase + burnOffset;
 
+        //Mint factor can't exceed the base mint factor
         if (finalBase > baseMintFactor){
             return baseMintFactor;
         } else {
@@ -275,10 +281,13 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         }
     }
 
+    //Exposes the mint factor for a specific issuer address
     function getIssuerMintFactor(address _issuerAddress) public view returns (uint256){
         return calculateMintFactor(_issuerAddress);
     }
 
+    //Calculates the maximum number of tokens that can be minted by a specific issuer
+    //based on the current total supply and the issuer's current mint factor
     function getIssuerMaxMintable(address _issuerAddress) public view returns (uint256){
         uint256 mintFactor = calculateMintFactor(_issuerAddress);
         uint256 currentSupply = totalSupply();
@@ -291,7 +300,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         return issuers;
     }
 
-    //Returns an array of expired issuers to make it easier for users to track
+    //Returns an array of expired issuers
     function getExpiredIssuers() public view returns (address[] memory){
         uint256 expiredCount = 0;
     
@@ -314,6 +323,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         return expiredIssuers;
     }
 
+    //Internal helper function to remove an address from the issuers array
     function removeIssuerFromArray(address issuer) internal {
         uint idx = issuerData[issuer].index;
         uint lastIdx = issuers.length - 1;
@@ -332,6 +342,7 @@ contract PublicDomainToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, IPu
         internal
         override(ERC20, ERC20Votes)
     {
+        //modified to prevent transfers to the contract address
         require(to != address(this), "Cannot transfer to contract address");
         super._update(from, to, value);
     }
