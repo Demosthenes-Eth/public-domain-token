@@ -4,3 +4,4 @@ lib/
 broadcast/
 *.env
 *PublicDomainToken_flattened.sol
+*.toml
